@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="GB2312" ?>
+<configuration>
+	<head>
+	  <field name="isChecked" length="1" />
+	  <field name="version" length="3" />
+	  <field name="reserved"  length="10" />
+	</head>
+</configuration>

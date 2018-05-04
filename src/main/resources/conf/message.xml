@@ -1,0 +1,1424 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!-- edited with XMLSPY v2004 rel. 3 U (http://www.xmlspy.com) by chenhf (icfcc) -->
+<configuration>
+    <messageList>
+        <!--报文类型与描述器的对应关系-->
+        <msg_mapping>
+            <rec tasktype="4" msgverpos="0" msgverlength="3"/>
+        </msg_mapping>
+        <message tasktype="4" version="1.0" headerLength="147" readerVersion="1.1" charset="GB18030">
+            <segment name="Head" segmentLength="147" opitional="false" unique="true">
+                <field name="Version" type="A" startPosition="0" endPosition="2" opitional="false"/>
+                <field name="FinianceCode" type="A" startPosition="3" endPosition="16" opitional="false"/>
+                <field name="CreatedTime" type="A" startPosition="17" endPosition="30" opitional="false"/>
+                <field name="ProgramVersion" type="A" startPosition="31" endPosition="33" opitional="false"/>
+                <field name="RetryTips" type="N" startPosition="34" endPosition="34" opitional="false"/>
+                <field name="MsgType" type="N" startPosition="35" endPosition="35" opitional="false"/>
+                <field name="TotalRecords" type="N" startPosition="36" endPosition="45" opitional="false"/>
+                <field name="FirstDate" type="A" startPosition="46" endPosition="53" opitional="false"/>
+                <field name="LastDate" type="A" startPosition="54" endPosition="61" opitional="false"/>
+                <field name="ContactPerson" type="A" startPosition="62" endPosition="91" opitional="false"/>
+                <field name="ContactPhone" type="A" startPosition="92" endPosition="116" opitional="false"/>
+                <field name="reservered" type="A" startPosition="117" endPosition="146" length="30" opitional="false"/>
+                <dataSource>
+                    <sharedData name="msgType" range="global" type="String" sourceData="{$MsgType}"/>
+                    <sharedData name="checkLevel" range="global" type="String" sourceData="1"/>
+                    <sharedData name="CreatedTime" range="global" type="String" sourceData="{$CreatedTime}"/>
+                    <sharedData name="FirstTime" range="global" type="String" sourceData="{$FirstDate}"/>
+                    <sharedData name="LastTime" range="global" type="String" sourceData="{$LastDate}"/>
+                </dataSource>
+                <checkrules>
+                    <rule name="rule1-21" checkType="DE" checkedFieldName="{$fileName}" checkedStartPosition="0" checkedEndPostion="14" dataList="{$FinianceCode}" errorMsg="报文头[金融机构代码]与文件名中不一致" errorCode="06"/>
+                    <rule name="rule1-2" checkType="D" checkedFieldName="CreatedTime" errorMsg="报文头部[报文生成时间]字段不是有效时间" errorCode="07"/>
+                    <rule name="rule1-3" checkType="DR" checkedFieldName="CreatedTime" checkedStartPosition="0" checkedEndPostion="8" dataStartValue="20040101" dataEndValue="{$systemdate}" errorMsg="报文头部[报文生成时间]字段检查错误：报文生成时间年份必须大于等于2004，同时字段值必须小于等于当前系统时间" errorCode="07"/>
+                    <rule name="rule1-5" checkType="D" checkedFieldName="FirstDate" errorMsg="报文头[最早结算/应还款日期]字段不是有效日期" errorCode="08"/>
+                    <rule name="rule1-6" checkType="DR" checkedFieldName="FirstDate" dataStartValue="19000101" dataEndValue="{$systemdate}" errorMsg="报文头[最早结算/应还款日期]字段必须位于1900年1月1日和当前系统时间之间" errorCode="08"/>
+                    <rule name="rule1-7" checkType="D" checkedFieldName="LastDate" errorMsg="报文头[最晚结算/应还款日期]字段不是有效日期" errorCode="08"/>
+                    <rule name="rule1-8" checkType="DR" checkedFieldName="LastDate" dataStartValue="{$FirstDate}" dataEndValue="{$systemdate}" errorMsg="报文头[最晚结算/应还款日期]字段必须大于等于[最早结算/应还款日期]字段同时小于等于当前系统时间" errorCode="08"/>
+                    <rule name="rule1-18" checkType="DE" checkedFieldName="LastDate" checkedStartPosition="0" checkedEndPostion="6" dataList="{$dataYearMonth}" errorMsg="报文头[最晚结算/应还款日期]字段年月值必须与文件名一致" errorCode="08"/>
+                    <rule name="rule1-19" checkType="DE" checkedFieldName="FirstDate" checkedStartPosition="0" checkedEndPostion="6" dataList="{$dataYearMonth}" errorMsg="报文头[最早结算/应还款日期]字段年月值必须与文件名一致" errorCode="08"/>
+                    <rule name="rule1-15" checkType="DE" checkedFieldName="{$fileName}" checkedStartPosition="24" checkedEndPostion="25" dataList="{$RetryTips}-1" errorMsg="报文头[重报提示]与文件名不一致" errorCode="09"/>
+                    <rule name="rule1-16" checkType="DE" checkedFieldName="{$fileName}" checkedStartPosition="23" checkedEndPostion="24" dataList="{$MsgType}" errorMsg="报文头[报文类别]与文件名不一致" errorCode="09">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="{$fileName}" checkedStartPosition="24" checkedEndPostion="25" dataList="0;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule1-17" checkType="DE" checkedFieldName="{$fileName}" checkedStartPosition="25" checkedEndPostion="26" dataList="{$MsgType}" errorMsg="报文头[报文类别]与文件名不一致" errorCode="09">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="{$fileName}" checkedStartPosition="24" checkedEndPostion="25" dataList="1;2;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule1-10" checkType="NA" checkedFieldName="ContactPerson" reverseCheck="true" errorMsg="报文头[联系人]字段不能为空" errorCode="11"/>
+                    <rule name="rule1-11" checkType="NA" checkedFieldName="ContactPhone" reverseCheck="true" errorMsg="报文头[联系电话]字段不能为空" errorCode="11"/>
+                </checkrules>
+            </segment>
+            <segment name="RecordHeader" segmentLength="4">
+                <field name="recordLength" type="N" startPosition="0" endPosition="3" opitional="false"/>
+            </segment>
+            <segment name="A" segmentLength="341" opitional="false" unique="true">
+                <field name="A" type="A" startPosition="0" endPosition="0" opitional="false"/>
+                <field name="FinanceCode" type="A" startPosition="1" endPosition="14" opitional="false"/>
+                <field name="GeneralType" type="A" startPosition="15" endPosition="15" opitional="false"/>
+                <field name="Type" type="A" startPosition="16" endPosition="17" opitional="false"/>
+                <field name="Account" type="A" startPosition="18" endPosition="57" opitional="false"/>
+                <field name="Area" type="A" startPosition="58" endPosition="63" opitional="false"/>
+                <field name="DataOpened" type="A" startPosition="64" endPosition="71" opitional="false"/>
+                <field name="DateClosed" type="A" startPosition="72" endPosition="79" opitional="false"/>
+                <field name="Currency" type="A" startPosition="80" endPosition="82" opitional="false"/>
+                <field name="CreditLimit" type="N" startPosition="83" endPosition="92" opitional="false"/>
+                <field name="SharedCredit" type="N" startPosition="93" endPosition="102" opitional="false"/>
+                <field name="MaxDebt" type="N" startPosition="103" endPosition="112" opitional="false"/>
+                <field name="GuaranteeWay" type="A" startPosition="113" endPosition="113" opitional="false"/>
+                <field name="TermsFreq" type="A" startPosition="114" endPosition="115" opitional="false"/>
+                <field name="MonthDuration" type="A" startPosition="116" endPosition="118" opitional="false"/>
+                <field name="MonthUnpaid" type="A" startPosition="119" endPosition="121" opitional="false"/>
+                <field name="BillingDATE" type="A" startPosition="122" endPosition="129" opitional="false"/>
+                <field name="RecentPayDATE" type="A" startPosition="130" endPosition="137" opitional="false"/>
+                <field name="ScheduledAmount" type="N" startPosition="138" endPosition="147" opitional="false"/>
+                <field name="ActualPayAmount" type="N" startPosition="148" endPosition="157" opitional="false"/>
+                <field name="Balance" type="N" startPosition="158" endPosition="167" opitional="false"/>
+                <field name="Terms_PastDue" type="N" startPosition="168" endPosition="169" opitional="false"/>
+                <field name="Amount_PastDue" type="N" startPosition="170" endPosition="179" opitional="false"/>
+                <field name="AmountPastDue30" type="N" startPosition="180" endPosition="189" opitional="false"/>
+                <field name="AmountPastDue60" type="N" startPosition="190" endPosition="199" opitional="false"/>
+                <field name="AmountPastDue90" type="N" startPosition="200" endPosition="209" opitional="false"/>
+                <field name="AmountPastDue180" type="N" startPosition="210" endPosition="219" opitional="false"/>
+                <field name="TermsPastDue" type="N" startPosition="220" endPosition="222" opitional="false"/>
+                <field name="MaxTerms_PastDue" type="N" startPosition="223" endPosition="224" opitional="false"/>
+                <field name="AccountLevelStat" type="N" startPosition="225" endPosition="225" opitional="false"/>
+                <field name="AccountStat" type="A" startPosition="226" endPosition="226" opitional="false"/>
+                <field name="PayStat_24Month" type="A" startPosition="227" endPosition="250" opitional="false" ignoreBlank="false"/>
+                <field name="Unpaid180" type="N" startPosition="251" endPosition="260" opitional="false"/>
+                <field name="tradeType" type="A" startPosition="261" endPosition="261" opitional="false"/>
+                <field name="Name" type="A" startPosition="262" endPosition="291" opitional="false"/>
+                <field name="CertType" type="A" startPosition="292" endPosition="292" opitional="false"/>
+                <field name="CertNo" type="A" startPosition="293" endPosition="310" opitional="false"/>
+                <field name="ReservedA" type="A" startPosition="311" endPosition="340" opitional="false"/>
+                <checkrules>
+                    <rule name="rule2-1" checkType="DL" checkedFieldName="GeneralType" reverseCheck="false" dataList="1;2;" errorMsg="基础段[业务种类]字段不在数据字典中" errorCode="7117101"/>
+                    <rule name="rule2-2" checkType="DL" checkedFieldName="Type" reverseCheck="false" dataList="11;12;21;31;41;99;" errorMsg="基础段中[业务种类]数据项值为'1-贷款'时，[业务种类细分]数据项值只能填写填写'贷款'项下的代码" errorCode="7111016">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-3" checkType="DL" checkedFieldName="Type" reverseCheck="false" dataList="71;81;99;" errorMsg="基础段中[业务种类]数据项值为'2-信用卡'时，[业务种类细分]数据项值只能填写'信用卡'项下的代码" errorCode="7111017">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="2;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-3-1" checkType="N" checkedFieldName="Area" errorMsg="基础段[发生地点]字段值数字型检查错误" errorCode="3141012"/>
+                    <rule name="rule2-4" checkType="D" checkedFieldName="DataOpened" errorMsg="基础段[开户日期]字段不是有效日期" errorCode="2101009">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-7" checkType="D" checkedFieldName="DateClosed" errorMsg="基础段[到期日期]字段不是有效日期" errorCode="2103009">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-5" checkType="DR" checkedFieldName="DataOpened" dataStartValue="19000101" dataEndValue="{$DateClosed}" errorMsg="基础段[开户日期]字段必须大于等于1900年1月1日并且小于等于[到期日期]字段" errorCode="2101015"/>
+                    <rule name="rule2-6" checkType="DR" checkedFieldName="DataOpened" dataStartValue="19000101" dataEndValue="{$BillingDATE}" errorMsg="基础段[开户日期]字段必须大于等于1900年1月1日并且小于等于[结算/应还款日期]字段" errorCode="2101015"/>
+                    <rule name="rule2-6-1" checkType="DR" checkedFieldName="DataOpened" dataStartValue="19000101" dataEndValue="{$CreatedTime}" compareWay="String" errorMsg="基础段[开户日期]字段必须大于等于1900年1月1日并且小于等于报文头[报文生成时间]字段" errorCode="2101015"/>
+                    <rule name="rule2-8" checkType="DL" checkedFieldName="DateClosed" dataList="20991231;" errorMsg="当[业务种类]字段为信用卡时，[到期日期]必须为'20991231'" errorCode="2103015">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="2;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-9" checkType="DL" checkedFieldName="Currency" reverseCheck="false" dataList="CNY;HKD;USD" errorMsg="基础段[币种]字段不在数据字典列表中" errorCode="1418104"/>
+                    <rule name="rule2-10" checkType="N" checkedFieldName="CreditLimit" errorMsg="基础段[授信额度]字段值数字型检查错误" errorCode="1101012"/>
+                    <rule name="rule2-11" checkType="N" checkedFieldName="MaxDebt" errorMsg="基础段[最大负债额]字段值数字型检查错误" errorCode="1103012"/>
+                    <rule name="rule2-12" checkType="DR" checkedFieldName="CreditLimit" dataStartValue="{$MaxDebt}" errorMsg="(基础段中[业务种类]数据项值为'1-贷款'时，[授信额度]必须大于等于[最大负债额]" errorCode="1101018">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-13" checkType="N" checkedFieldName="SharedCredit" errorMsg="基础段[共享授信额度]字段值数字型检查错误" errorCode="1102012"/>
+                    <rule name="rule2-15" checkType="DL" checkedFieldName="GuaranteeWay" dataList="1;2;3;4;5;6;9;" errorMsg="基础段[担保方式]字段不在数据字典列表中" errorCode="7115105"/>
+                    <rule name="rule2-16" checkType="DL" checkedFieldName="TermsFreq" dataList="01;02;03;04;05;06;07;08;99;" errorMsg="基础段[业务种类]为'贷款'时，[还款频率]字段必须为'C'以外的数据字典中的值" errorCode="4111019">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-17" checkType="DL" checkedFieldName="TermsFreq" dataList="C;" errorMsg="基础段[业务种类]为'信用卡'时，[还款频率]字段必须用'C'填充" errorCode="4111019">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="2;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-18" checkType="N" checkedFieldName="MonthDuration" strictLevel="2" errorMsg="业务种类为贷款,还款频率不为一次性还款、不定期还款和其他类型还款时，基础段[还款月数]字段值必须为整数" errorCode="4101020">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" reverseCheck="true" checkedFieldName="TermsFreq" dataList="07;"/>
+                            <rule name="rule3" checkType="DL" reverseCheck="true" checkedFieldName="TermsFreq" dataList="08;"/>
+                            <rule name="rule4" checkType="DL" reverseCheck="true" checkedFieldName="TermsFreq" dataList="99;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-19" checkType="DL" checkedFieldName="MonthDuration" dataList="C;" errorMsg="基础段[业务种类]字段为'信用卡'时，[还款月数]字段必须用'C'填充" errorCode="4101019">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="2;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-20" checkType="DL" checkedFieldName="MonthDuration" dataList="O;" errorMsg="基础段[业务种类]字段为'贷款'时，当[还款频率]字段为一次性时，[还款月数]字段必须用'O'填充" errorCode="4101020">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="TermsFreq" dataList="07;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-21" checkType="DL" checkedFieldName="MonthDuration" dataList="U;" errorMsg="基础段[业务种类]字段为'贷款'时，，当[还款频率]字段为不定期时，[还款月数]字段必须用'U'填充" errorCode="4101020">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="TermsFreq" dataList="08;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-22" checkType="DL" checkedFieldName="MonthDuration" dataList="X;" errorMsg="基础段[业务种类]字段为'贷款'时，，当[还款频率]字段为其它时，[还款月数]字段必须用'X'填充" errorCode="4101020">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="TermsFreq" dataList="99;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-23" checkType="DR" checkedFieldName="MonthDuration" dataStartValue="{$MonthUnpaid}" errorMsg="还款月数]字段值必须大于等于[剩余还款月数]字段值" errorCode="4101026">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="TermsFreq" dataList="01;02;03;04;05;06;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-24" checkType="DL" checkedFieldName="MonthUnpaid" dataList="C;" errorMsg="当[业务种类]字段值为信用卡时，[剩余还款月数]字段必须用'C'填充" errorCode="4105019">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="2;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-24-1" checkType="N" checkedFieldName="MonthUnpaid" strictLevel="2" errorMsg="业务种类为贷款,还款频率不为一次性还款、不定期还款和其他类型还款时，基础段[剩余还款月数]字段值必须为整数" errorCode="4105020">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" reverseCheck="true" checkedFieldName="TermsFreq" dataList="07;"/>
+                            <rule name="rule3" checkType="DL" reverseCheck="true" checkedFieldName="TermsFreq" dataList="08;"/>
+                            <rule name="rule4" checkType="DL" reverseCheck="true" checkedFieldName="TermsFreq" dataList="99;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-25" checkType="DL" checkedFieldName="MonthUnpaid" dataList="O;" errorMsg="当[还款频率]字段值为一次性时，[剩余还款月数]字段必须用'O'填充" errorCode="4105020">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="TermsFreq" dataList="07;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-26" checkType="DL" checkedFieldName="MonthUnpaid" dataList="U;" errorMsg="当[还款频率]字段值为不定期时，[剩余还款月数]字段必须用'U'填充" errorCode="4105020">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="TermsFreq" dataList="08;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-27" checkType="DL" checkedFieldName="MonthUnpaid" dataList="X;" errorMsg="当[还款频率]字段为其它时，[剩余还款月数]字段必须用'X'填充" errorCode="4105020">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="TermsFreq" dataList="99;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-28" checkType="D" checkedFieldName="BillingDATE" errorMsg="基础段[结算/应还款日期]字段不是有效日期" errorCode="2301009"/>
+                    <rule name="rule2-29" checkType="DR" checkedFieldName="BillingDATE" dataStartValue="{$FirstTime}" dataEndValue="{$LastTime}" errorMsg="基础段中[结算/应还款日期]必须大于等于[最早结算/应还款日期]且小于等于[最晚结算/应还款日期]" errorCode="2301027"/>
+                    <rule name="rule2-31" checkType="D" checkedFieldName="RecentPayDATE" errorMsg="基础段[最近一次实际还款日期]字段不是有效日期" errorCode="2107009"/>
+                    <rule name="rule2-32" checkType="DR" checkedFieldName="RecentPayDATE" dataStartValue="{$DataOpened}" errorMsg="[最近一次实际还款日期]字段需要大于等于[开户日期]字段" errorCode="2107028"/>
+                    <rule name="rule2-33" checkType="DR" checkedFieldName="RecentPayDATE" dataEndValue="{$BillingDATE}" errorMsg="当[结算/应还款日期]字段所在月大于'200412'时，[最近一次实际还款日期]字段需要小于等于[结算/应还款日期]字段" errorCode="2107028">
+                        <precondition>
+                            <rule name="rule1" checkType="DR" checkedFieldName="{$dataYearMonth}" dataStartValue="200501"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-33-1" checkType="DR" checkedFieldName="RecentPayDATE" checkedStartPosition="0" checkedEndPostion="6" dataEndValue="{$dataYearMonth}" errorMsg="当[结算/应还款日期]字段所在月小于等于'200412'时，[最近一次实际还款日期]字段值所在月需要小于等于[结算/应还款日期]字段值所在月" errorCode="2107028">
+                        <precondition>
+                            <rule name="rule1" checkType="DR" checkedFieldName="{$dataYearMonth}" reverseCheck="true" dataStartValue="200501"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-34" checkType="N" checkedFieldName="ScheduledAmount" errorMsg="基础段[本月应还款金额]字段值数字型检查错误" errorCode="1105012"/>
+                    <rule name="rule2-35" checkType="N" checkedFieldName="ActualPayAmount" errorMsg="基础段[实际还款金额]字段数字型检查错误" errorCode="1107012"/>
+                    <rule name="rule2-37" checkType="N" checkedFieldName="Balance" errorMsg="基础段[余额]字段数字型检查错误" errorCode="1109012"/>
+                    <rule name="rule2-38" checkType="DR" checkedFieldName="Balance" dataEndValue="{$MaxDebt}" errorMsg="基础段[余额]字段值必须小于等于[最大负债额]字段值" errorCode="1103029"/>
+                    <rule name="rule2-38-1" checkType="DR" checkedFieldName="Balance" dataStartValue="{$AmountPastDue30}+{$AmountPastDue60}+{$AmountPastDue90}+{$AmountPastDue180}-2" errorMsg="业务种类为贷款时，基础段中[逾期31-60天未归还贷款本金[＋[逾期61-90天未归还贷款本金]+[逾期91-180天未归还贷款本金]＋[逾期180天以上未归还贷款本金]必须小于等于[余额]＋2" errorCode="1109031">
+                        <precondition>
+                            <rule name="rule2" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-38-2" checkType="DR" checkedFieldName="Balance" dataStartValue="{$Amount_PastDue}" errorMsg="基础段中[业务种类]数据项值为'2-信用卡'，且[业务种类细分]数据项值为'贷记卡'时，[余额]字段值必须大于等于[当前逾期总额]字段值" errorCode="1109030">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="Type" dataList="81;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-38-2" checkType="DE" checkedFieldName="Balance" compareWay="number" dataList="0" errorMsg="当[业务种类]字段值为贷款,[账户状态]为结清,[余额]字段必须为'0'" errorCode="1109022">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="AccountStat" dataList="3;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-39" checkType="N" checkedFieldName="Terms_PastDue" errorMsg="基础段[当前逾期期数]字段数字型检查错误" errorCode="4109012"/>
+                    <rule name="rule2-40-1" checkType="DE" checkedFieldName="Terms_PastDue" compareWay="number" dataList="0" errorMsg="当[业务种类]字段值为贷款,[账户状态]为结清,[当前逾期期数]字段必须为'0'" errorCode="4109022">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="AccountStat" dataList="3;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-41" checkType="DR" checkedFieldName="Terms_PastDue" dataEndValue="{$MaxTerms_PastDue}" errorMsg="当[业务种类]为贷款时,基础段[当前逾期期数]必须小于等于[最高逾期期数]字段值" errorCode="4109032">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-41-1" checkType="DR" checkedFieldName="Terms_PastDue" dataStartValue="1" errorMsg="[业务种类]为贷款,[账户状态]为'逾期'或者'呆帐',[当前逾期期数]不能为0" errorCode="4109021">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="AccountStat" dataList="2;4;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-41-2" checkType="DR" checkedFieldName="Amount_PastDue" dataStartValue="1" errorMsg="[业务种类]为贷款,[账户状态]为'逾期'或者'呆帐',[当前逾期总额]不能为0" errorCode="1111021">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="AccountStat" dataList="2;4;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-42" checkType="N" checkedFieldName="Amount_PastDue" errorMsg="基础段[当前逾期总额]字段数字型检查错误" errorCode="1111012"/>
+                    <rule name="rule2-43" checkType="DE" checkedFieldName="Amount_PastDue" compareWay="number" dataList="0" errorMsg="基础段中[当前逾期期数]、[当前逾期总额]两数据项值或同时为零或同时不为零" errorCode="4109067">
+                        <precondition>
+                            <rule name="rule1" checkType="DE" checkedFieldName="Terms_PastDue" compareWay="number" dataList="0"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-43-1" checkType="DE" checkedFieldName="Terms_PastDue" compareWay="number" dataList="0" errorMsg="基础段中[当前逾期期数]、[当前逾期总额]两数据项值或同时为零或同时不为零" errorCode="4109067">
+                        <precondition>
+                            <rule name="rule1" checkType="DE" checkedFieldName="Amount_PastDue" compareWay="number" dataList="0"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-43-2" checkType="DE" checkedFieldName="Amount_PastDue" compareWay="number" dataList="0" errorMsg="当[业务种类]字段值为贷款,[账户状态]为结清,[当前逾期总额]字段必须为'0'" errorCode="1111022">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="AccountStat" dataList="3;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-45" checkType="N" checkedFieldName="AmountPastDue30" errorMsg="基础段[逾期31-60天未归还贷款本金]字段数字型检查错误" errorCode="1113012"/>
+                    <rule name="rule2-46-1" checkType="DE" checkedFieldName="AmountPastDue30" compareWay="number" dataList="0" errorMsg="当[业务种类]字段为贷款，[账户拥有者信息提示]为新账户开立,并且[结算/应还款日期]所在月等于[开户日期]所在月，[逾期31-60天未归还贷款本金]字段必须为'0'" errorCode="1113036">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="tradeType" dataList="2;"/>
+                            <rule name="rule3" checkType="DE" checkedFieldName="DataOpened" checkedStartPosition="0" checkedEndPostion="6" dataList="{$dataYearMonth}"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-47" checkType="N" checkedFieldName="AmountPastDue60" errorMsg="基础段[逾期61-90天未归还贷款本金]字段数字型检查错误" errorCode="1115012"/>
+                    <rule name="rule2-48-1" checkType="DE" checkedFieldName="AmountPastDue60" compareWay="number" dataList="0" errorMsg="当[业务种类]字段为贷款，[账户拥有者信息提示]为新账户开立,并且[结算/应还款日期]所在月等于[开户日期]所在月,[逾期61-90天未归还贷款本金]字段必须为'0'" errorCode="1115036">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="tradeType" dataList="2;"/>
+                            <rule name="rule3" checkType="DE" checkedFieldName="DataOpened" checkedStartPosition="0" checkedEndPostion="6" dataList="{$dataYearMonth}"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-49" checkType="N" checkedFieldName="AmountPastDue90" errorMsg="基础段[逾期91-180天未归还贷款本金]字段数字型检查错误" errorCode="1117012"/>
+                    <rule name="rule2-50-1" checkType="DE" checkedFieldName="AmountPastDue90" compareWay="number" dataList="0" errorMsg="当[业务种类]字段为贷款，[账户拥有者信息提示]为新账户开立,并且[结算/应还款日期]所在月等于[开户日期]所在月,[逾期91-180天未归还贷款本金]字段必须为'0'" errorCode="1117036">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="tradeType" dataList="2;"/>
+                            <rule name="rule3" checkType="DE" checkedFieldName="DataOpened" checkedStartPosition="0" checkedEndPostion="6" dataList="{$dataYearMonth}"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-51" checkType="N" checkedFieldName="AmountPastDue180" errorMsg="基础段[逾期180天以上未归还贷款本金]字段数字型检查错误" errorCode="1119012"/>
+                    <rule name="rule2-52-1" checkType="DE" checkedFieldName="AmountPastDue180" compareWay="number" dataList="0" errorMsg="当[业务种类]字段为贷款，[账户拥有者信息提示]为新账户开立,并且[结算/应还款日期]所在月等于[开户日期]所在月,[逾期180天以上未归还贷款本金]字段必须为'0'" errorCode="1119036">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="tradeType" dataList="2;"/>
+                            <rule name="rule3" checkType="DE" checkedFieldName="DataOpened" checkedStartPosition="0" checkedEndPostion="6" dataList="{$dataYearMonth}"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-44" checkType="DR" checkedFieldName="Amount_PastDue" dataStartValue="{$AmountPastDue30}+{$AmountPastDue60}+{$AmountPastDue90}+{$AmountPastDue180}-2" errorMsg="基础段中[逾期31-60天未归还贷款本金]＋[逾期61-90天未归还贷款本金]＋[逾期91-180天未归还贷款本金]＋[逾期180天以上未归还贷款本金]小于等于[当前逾期总额]＋2" errorCode="1111033">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-53" checkType="N" checkedFieldName="TermsPastDue" errorMsg="基础段[违约次数]字段数字型检查错误" errorCode="4312012"/>
+                    <rule name="rule2-54-1" checkType="DR" checkedFieldName="TermsPastDue" dataStartValue="1" errorMsg="当[业务种类]字段为贷款，[账户状态]为'逾期'或者'呆帐',[违约次数]字段不能为0" errorCode="4312021">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="AccountStat" dataList="2;4;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-55" checkType="N" checkedFieldName="MaxTerms_PastDue" errorMsg="基础段[最高逾期期数]字段数字型检查错误" errorCode="4107012"/>
+                    <rule name="rule2-56-1" checkType="DR" checkedFieldName="MaxTerms_PastDue" dataStartValue="1" errorMsg="当[业务种类]字段为贷款，[账户状态]为'逾期'或者'呆帐',[最高逾期期数]字段不能为0" errorCode="4107021">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="AccountStat" dataList="2;4;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-57" checkType="DR" checkedFieldName="MaxTerms_PastDue" dataEndValue="{$TermsPastDue}" errorMsg="基础段中[业务种类]为'1-贷款'时,[最高逾期期数]必须小于等于[违约次数]字段值" errorCode="4109032">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-58" checkType="DL" checkedFieldName="AccountLevelStat" dataList="1;2;3;4;5;9;" errorMsg="基础段[五级分类状态]不在数据字典列表中" errorCode="7105107"/>
+                    <rule name="rule2-59" checkType="DL" checkedFieldName="AccountStat" dataList="1;2;3;4;" errorMsg="基础段中[业务种类]数据项值为'1-贷款'时，[账户状态]数据项值必须填写'贷款'项下的代码" errorCode="7109016">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-60" checkType="DL" checkedFieldName="AccountStat" dataList="1;2;3;4;5;" errorMsg="基础段中[业务种类]数据项值为'2-信用卡'时，[账户状态]数据项值必须填写'信用卡'项下的代码" errorCode="7109017">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="2;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-61" checkType="DL" checkedFieldName="PayStat_24Month" iterateLength="1" dataList="/;*;N;1;2;3;4;5;6;7;D;Z;G;C;#;" errorMsg="基础段中[业务种类]数据项值为'1-贷款'时，[24个月（账户）还款状态]数据项值必须填写'贷款'项下的代码" errorCode="7107016">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-62" checkType="DL" checkedFieldName="PayStat_24Month" iterateLength="1" dataList="/;*;1;2;3;4;5;6;7;N;G;C;#;" errorMsg="基础段中[业务种类]数据项值为'2-信用卡'时，[24个月（账户）还款状态]数据项值必须填写'信用卡'项下的代码" errorCode="7107017">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="2;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-62-1" checkType="DL" checkedFieldName="PayStat_24Month" checkedStartPosition="23" checkedEndPostion="24" dataList="1;2;3;4;5;6;7;#" errorMsg="当[业务种类]字段为贷款，[账户状态]为'逾期'或者'呆帐',当前月状态必须为1～7的数字或者'#'" errorCode="7107021">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="AccountStat" dataList="2;4;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-62-2" checkType="DL" checkedFieldName="PayStat_24Month" checkedStartPosition="23" checkedEndPostion="24" dataList="C;" errorMsg="当[业务种类]字段值为贷款,[账户状态]为结清,基础段[24个月（账户）还款状态]字段最后一个月状态必须为'C'" errorCode="7107022">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="AccountStat" dataList="3;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-62-3" checkType="DL" checkedFieldName="PayStat_24Month" checkedStartPosition="23" checkedEndPostion="24" dataList="C;G;" errorMsg="当[业务种类]字段值为信用卡,[账户状态]为销户时,当前月状态必须为'C'或'G'" errorCode="7107023">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="2;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="AccountStat" dataList="4;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-62-4" checkType="PS" checkedFieldName="PayStat_24Month" dataList="/;" dataStartValue="{$DataOpened}" dataEndValue="{$BillingDATE}" errorMsg="基础段[24个月（账户）还款状态]字段检查错误：'开户日期'所在月之前各月还款状态必须为'/'，'开户日期'所在月之后各月还款状态不能为'/'" errorCode="7107068">	
+		</rule>
+                    <rule name="rule2-63" checkType="DL" checkedFieldName="PayStat_24Month" checkedStartPosition="23" checkedEndPostion="24" dataList="7;" errorMsg="基础段[24个月（账户）还款状态]字段不符合检查规则:[业务种类细分]字段为准贷记卡，[透支180天以上未付余额]字段值不为0，[24个月（账户）还款状态]字段最后一位为数值，则最后一位必须为'7'" errorCode="7111025">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="Type" dataList="71;"/>
+                            <rule name="rule2" checkType="DE" checkedFieldName="Unpaid180" reverseCheck="true" compareWay="number" dataList="0"/>
+                            <rule name="rule3" checkType="N" checkedFieldName="PayStat_24Month" checkedStartPosition="23" checkedEndPostion="24"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-63-1" checkType="DE" checkedFieldName="Unpaid180" compareWay="number" dataList="{$Balance}" errorMsg="基础段[24个月（账户）还款状态]字段不符合检查规则:[业务种类细分]字段为准贷记卡，[透支180天以上未付余额]字段值不为0，[24个月（账户）还款状态]字段当前月状态为数值，则[透支180天以上未付余额]=[余额]" errorCode="7111025">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="Type" dataList="71;"/>
+                            <rule name="rule2" checkType="DE" checkedFieldName="Unpaid180" reverseCheck="true" compareWay="number" dataList="0"/>
+                            <rule name="rule3" checkType="N" checkedFieldName="PayStat_24Month" checkedStartPosition="23" checkedEndPostion="24"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-64" checkType="DE" checkedFieldName="ScheduledAmount" compareWay="number" dataList="0" errorMsg="[24个月账户还款状态] 中当月状态为'*'时,[本月应还款金额]字段值必须为0" errorCode="1105035">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="PayStat_24Month" checkedStartPosition="23" checkedEndPostion="24" dataList="*;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-65" checkType="DL" checkedFieldName="PayStat_24Month" checkedStartPosition="23" checkedEndPostion="24" reverseCheck="true" dataList="7;" errorMsg="[业务种类细分]字段为准贷记卡，[透支180天以上未付余额]字段值为0，[24个月（账户）还款状态]字段最后一位必须不为'7'" errorCode="7111025">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="Type" dataList="71;"/>
+                            <rule name="rule2" checkType="DE" compareWay="number" checkedFieldName="Unpaid180" dataList="0"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-68" checkType="DR" checkedFieldName="ActualPayAmount" dataStartValue="{$ScheduledAmount}" errorMsg="[24个月（账户）还款状态]字段当前月为'N',[实际还款金额]字段必须大于等于[本月应还款金额]字段值" errorCode="1105024">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="PayStat_24Month" checkedStartPosition="23" checkedEndPostion="24" dataList="N;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-70" checkType="N" checkedFieldName="Unpaid180" errorMsg="基础段[透支180天以上未付余额]字段数字型检查错误" errorCode="1210012"/>
+                    <rule name="rule2-71-1" checkType="DE" checkedFieldName="Unpaid180" compareWay="number" dataList="0" errorMsg="当[业务种类]字段为贷款，[账户拥有者信息提示]为新账户开立,并且[结算/应还款日期]所在月等于[开户日期]所在月,[透支180天以上未付余额]字段必须为'0'" errorCode="1210036">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="tradeType" dataList="2;"/>
+                            <rule name="rule3" checkType="DE" checkedFieldName="DataOpened" checkedStartPosition="0" checkedEndPostion="6" dataList="{$dataYearMonth}"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-73" checkType="DL" checkedFieldName="tradeType" dataList="1;2;3;" errorMsg="基础段[账户拥有者信息提示]字段不在数据字典列表中" errorCode="7121109"/>
+                    <rule name="rule2-74" checkType="DL" checkedFieldName="CertType" dataList="0;1;2;3;4;5;6;7;8;9;X;" errorMsg="基础段[证件类型]字段不在数据字典列表中" errorCode="5107108"/>
+                    <rule name="rule2-75" checkType="ID" checkedFieldName="CertNo" errorMsg="基础段[证件类型]字段为身份证，基础段[证件号码]必须为有效身份证号码" errorCode="5109037">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="CertType" dataList="0;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-76" checkType="NA" checkedFieldName="Name" reverseCheck="true" errorMsg="基础段[姓名]字段不能为空" errorCode="5101013"/>
+                    <!--
+		<rule name="rule2-81" checkType="CS" checkedFieldName="Name" 
+			errorMsg="基础段[姓名]字段汉字检查错误"
+			errorCode = "5101069" />	
+	      -->
+                    <rule name="rule2-77" checkType="NA" checkedFieldName="CertNo" reverseCheck="true" errorMsg="基础段[证件号码]字段不能为空" errorCode="5109013"/>
+                    <rule name="rule2-78" checkType="NA" checkedFieldName="FinanceCode" reverseCheck="true" errorMsg="基础段[金融机构代码]字段不能为空" errorCode="6101013"/>
+                    <rule name="rule2-79" checkType="NA" checkedFieldName="Account" reverseCheck="true" errorMsg="基础段[业务号]字段不能为空" errorCode="7101013"/>
+                </checkrules>
+            </segment>
+            <segment name="B" segmentLength="371" opitional="false" unique="true">
+                <field name="B" type="A" startPosition="0" endPosition="0" opitional="false"/>
+                <field name="Gender" type="N" startPosition="1" endPosition="1" opitional="false"/>
+                <field name="Birthday" type="A" startPosition="2" endPosition="9" opitional="false"/>
+                <field name="Marriage" type="N" startPosition="10" endPosition="11" opitional="false"/>
+                <field name="EduLevel" type="N" startPosition="12" endPosition="13" opitional="false"/>
+                <field name="EduDegree" type="N" startPosition="14" endPosition="14" opitional="false"/>
+                <field name="HomeTel" type="A" startPosition="15" endPosition="39" opitional="false"/>
+                <field name="MobileTel" type="A" startPosition="40" endPosition="55" opitional="false"/>
+                <field name="OfficeTel" type="A" startPosition="56" endPosition="80" opitional="false"/>
+                <field name="Email" type="A" startPosition="81" endPosition="110" opitional="false"/>
+                <field name="Address" type="A" startPosition="111" endPosition="170" opitional="false"/>
+                <field name="ZIP" type="A" startPosition="171" endPosition="176" opitional="false"/>
+                <field name="Residence1" type="A" startPosition="177" endPosition="236" opitional="false"/>
+                <field name="Spouse_Name" type="A" startPosition="237" endPosition="266" opitional="false"/>
+                <field name="Spouse_CertType" type="A" startPosition="267" endPosition="267" opitional="false"/>
+                <field name="Spouse_CertNo" type="A" startPosition="268" endPosition="285" opitional="false"/>
+                <field name="Spouse_Office" type="A" startPosition="286" endPosition="345" opitional="false"/>
+                <field name="Spouse_Tel" type="A" startPosition="346" endPosition="370" opitional="false"/>
+                <checkrules>
+                    <rule name="rule3-1" checkType="DL" checkedFieldName="Gender" dataList="0;1;2;9;" errorMsg="身份信息段[性别]字段不在数据字典列表中" errorCode="5105201"/>
+                    <rule name="rule3-2" checkType="D" checkedFieldName="Birthday" errorMsg="身份信息段[出生日期]字段必须为有效日期" errorCode="2408009"/>
+                    <rule name="rule3-3" checkType="DL" checkedFieldName="Marriage" dataList="10;20;21;22;23;30;40;90;" errorMsg="身份信息段[婚姻状况]字段不在数据字典列表中" errorCode="5111202"/>
+                    <rule name="rule3-4" checkType="DL" checkedFieldName="EduLevel" dataList="10;20;30;40;50;60;70;80;90;99;" errorMsg="身份信息段[最高学历]字段不在数据字典列表中" errorCode="5113203"/>
+                    <rule name="rule3-5" checkType="DL" checkedFieldName="EduDegree" dataList="0;1;2;3;4;9;" errorMsg="身份信息段[最高学位]字段不在数据字典列表中" errorCode="5115204"/>
+                    <rule name="rule3-6" checkType="DL" checkedFieldName="Spouse_CertType" dataList="0;1;2;3;4;5;6;7;8;9;X;" errorMsg="身份信息段[配偶证件类型]字段不在数据字典列表中" errorCode="5208108">
+                        <precondition>
+                            <rule name="rule1" checkType="NA" checkedFieldName="Spouse_CertType" reverseCheck="true"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule3-8" checkType="N" checkedFieldName="ZIP" errorMsg="身份信息段[通讯地址邮政编码]字段数字型检查错误" errorCode="3109012"/>
+                    <rule name="rule3-10" checkType="NA" checkedFieldName="Spouse_Name" errorMsg="[婚姻状况]字段为未婚，[配偶姓名]字段必须为空" errorCode="5111038">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="Marriage" dataList="10;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule3-10" checkType="NA" checkedFieldName="Spouse_CertType" errorMsg="[婚姻状况]字段为未婚，[配偶证件类型]字段必须为空" errorCode="5111038">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="Marriage" dataList="10;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule3-11" checkType="NA" checkedFieldName="Spouse_CertNo" errorMsg="[婚姻状况]字段为未婚，[配偶证件号码]字段必须为空" errorCode="5111038">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="Marriage" dataList="10;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule3-12" checkType="NA" checkedFieldName="Spouse_Office" errorMsg="[婚姻状况]字段为未婚，[配偶工作单位]字段必须为空" errorCode="5111038">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="Marriage" dataList="10;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule3-13" checkType="NA" checkedFieldName="Spouse_Tel" errorMsg="[婚姻状况]字段为未婚，[配偶联系电话]字段必须为空" errorCode="5111038">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="Marriage" dataList="10;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule3-14" checkType="NA" checkedFieldName="Address" reverseCheck="true" errorMsg="身份信息段[通讯地址]字段不能为空" errorCode="3113013"/>
+                </checkrules>
+            </segment>
+            <segment name="C" segmentLength="199" opitional="true" unique="false">
+                <field name="C" type="A" startPosition="0" endPosition="0" opitional="false"/>
+                <field name="Occupation" type="A" startPosition="1" endPosition="1" opitional="false" hashField="false"/>
+                <field name="Company" type="A" startPosition="2" endPosition="61" opitional="false" hashField="true"/>
+                <field name="Industry" type="A" startPosition="62" endPosition="62" opitional="false" hashField="false"/>
+                <field name="OccAddress" type="A" startPosition="63" endPosition="122" opitional="false" hashField="false"/>
+                <field name="OccZIP" type="A" startPosition="123" endPosition="128" opitional="false" hashField="false"/>
+                <field name="Duration" type="A" startPosition="129" endPosition="132" opitional="false" hashField="false"/>
+                <field name="Duty" type="N" startPosition="133" endPosition="133" opitional="false" hashField="false"/>
+                <field name="Caste" type="N" startPosition="134" endPosition="134" opitional="false" hashField="false"/>
+                <field name="AnnualIncome" type="A" startPosition="135" endPosition="144" opitional="false" hashField="false"/>
+                <field name="SalaryAccount" type="A" startPosition="145" endPosition="184" opitional="false"/>
+                <field name="SalaryAccountBank" type="A" startPosition="185" endPosition="198" opitional="false"/>
+                <checkrules>
+                    <rule name="rule4-1" checkType="NA" checkedFieldName="Company" reverseCheck="true" errorMsg="职业信息段[单位名称]字段不能为空" errorCode="5117013"/>
+                    <rule name="rule4-2" checkType="N" checkedFieldName="OccZIP" errorMsg="职业信息段[单位地址邮政编码]字段数字型检查错误" errorCode="3129012">
+                        <precondition>
+                            <rule name="rule3" checkType="NA" checkedFieldName="OccZIP" reverseCheck="true"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule4-3" checkType="DL" checkedFieldName="Occupation" dataList="0;1;3;4;5;6;X;Y;Z;" errorMsg="职业信息段[职业]字段不在数据字典列表中" errorCode="5119301"/>
+                    <rule name="rule4-4" checkType="DL" checkedFieldName="Industry" dataList="A;B;C;D;E;F;G;H;I;J;K;L;M;N;O;P;Q;R;S;T;Z;" errorMsg="职业信息段[单位所属行业]字段不在数据字典列表中" errorCode="6103302"/>
+                    <rule name="rule4-5" checkType="N" checkedFieldName="Duration" errorMsg="职业信息段[本单位工作起始年份]字段数字型检查错误" errorCode="2109012">
+                        <precondition>
+                            <rule name="rule3" checkType="NA" checkedFieldName="Duration" reverseCheck="true"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule5-6" checkType="DR" checkedFieldName="Duration" dataStartValue="1900" dataEndValue="{$currentYear}" errorMsg="职业信息段[本单位工作起始年份]必须大于等于'1900'同时小于等于当前年份" errorCode="2109039">
+                        <precondition>
+                            <rule name="rule3" checkType="NA" checkedFieldName="Duration" reverseCheck="true"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule4-7" checkType="DL" checkedFieldName="Duty" dataList="1;2;3;4;9;" errorMsg="职业信息段[职务]字段不在数据字典列表中" errorCode="5121303"/>
+                    <rule name="rule4-8" checkType="DL" checkedFieldName="Caste" dataList="0;1;2;3;9;" errorMsg="职业信息段[职称]字段不在数据字典列表中" errorCode="5123304"/>
+                    <rule name="rule4-9" checkType="N" checkedFieldName="AnnualIncome" errorMsg="职业信息段[年收入]字段数字型检查错误" errorCode="5125012">
+                        <precondition>
+                            <rule name="rule3" checkType="NA" checkedFieldName="AnnualIncome" reverseCheck="true"/>
+                        </precondition>
+                    </rule>
+                </checkrules>
+            </segment>
+            <segment name="D" segmentLength="68" opitional="true" unique="false">
+                <field name="D" type="A" startPosition="0" endPosition="0" opitional="false"/>
+                <field name="HomeAddress" type="A" startPosition="1" endPosition="60" opitional="false" hashField="true"/>
+                <field name="ResZIP" type="A" startPosition="61" endPosition="66" opitional="false" hashField="false"/>
+                <field name="ResCondition" type="A" startPosition="67" endPosition="67" opitional="false" hashField="false"/>
+                <checkrules>
+                    <rule name="rule5-1" checkType="NA" checkedFieldName="HomeAddress" reverseCheck="true" errorMsg="居住地址段[居住地址]字段不能为空" errorCode="3103013"/>
+                    <rule name="rule5-2" checkType="N" checkedFieldName="ResZIP" errorMsg="居住地址段[居住地址邮政编码]字段数字型检查错误" errorCode="3121012"/>
+                    <rule name="rule5-3" checkType="DL" checkedFieldName="ResCondition" dataList="1;2;3;4;5;6;7;9;" errorMsg="居住地址段[居住状况]字段不在数据字典列表中" errorCode="5127401"/>
+                </checkrules>
+            </segment>
+            <segment name="E" segmentLength="61" opitional="true" unique="false">
+                <field name="E" type="A" startPosition="0" endPosition="0" opitional="false"/>
+                <field name="Name" type="A" startPosition="1" endPosition="30" opitional="false"/>
+                <field name="CertType" type="A" startPosition="31" endPosition="31" opitional="false"/>
+                <field name="CertNo" type="A" startPosition="32" endPosition="49" opitional="false"/>
+                <field name="GuaranteeSum" type="N" startPosition="50" endPosition="59" opitional="false"/>
+                <field name="GuaranteeStat" type="N" startPosition="60" endPosition="60" opitional="false"/>
+                <checkrules checkLevel="1">
+                    <rule name="rule6-1" checkType="NA" checkedFieldName="Name" reverseCheck="true" errorMsg="担保信息段[姓名]字段不能为空" errorCode="5101013"/>
+                    <!--
+ 	     		<rule name="rule6-6" checkType="CS" checkedFieldName="Name" 
+ 	     			errorMsg="担保信息段[姓名]字段值汉字检查错误"
+ 	     			errorCode = "5101070"/>
+ 	     	        -->
+                    <rule name="rule6-2" checkType="DL" checkedFieldName="CertType" dataList="0;1;2;3;4;5;6;7;8;9;X;" errorMsg="担保信息段[证件类型]字段不在数据字典列表中" errorCode="5107108"/>
+                    <rule name="rule6-3" checkType="NA" checkedFieldName="CertNo" reverseCheck="true" errorMsg="担保信息段[证件号码]字段不能为空" errorCode="5109013"/>
+                    <rule name="rule6-4" checkType="ID" checkedFieldName="CertNo" errorMsg="担保信息段[证件号码]字段不符合检查规则：[证件类型]字段为身份证，[证件号码]字段不为有效身份证号码" errorCode="5109040">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="CertType" dataList="0;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule6-5" checkType="N" checkedFieldName="GuaranteeSum" errorMsg="担保信息段[担保金额]字段数字型检查错误" errorCode="1121012"/>
+                    <rule name="rule6-6" checkType="DL" checkedFieldName="GuaranteeStat" dataList="1;2;" errorMsg="担保信息段[担保状态]字段不在数据字典列表中" errorCode="7119501"/>
+                </checkrules>
+            </segment>
+            <segment name="F" segmentLength="63" opitional="true" unique="false">
+                <field name="F" type="A" startPosition="0" endPosition="0" opitional="false"/>
+                <field name="Account" type="A" startPosition="1" endPosition="40" opitional="false"/>
+                <field name="FinanceCode" type="A" startPosition="41" endPosition="54" opitional="false"/>
+                <field name="BillingDATE" type="A" startPosition="55" endPosition="62" opitional="false"/>
+                <checkrules>
+                    <rule name="rule7-1" checkType="D" checkedFieldName="BillingDATE" errorMsg="交易标识变更段[结算/应还款日期]字段必须为有效日期" errorCode="2301009"/>
+                    <rule name="rule7-2" checkType="NA" checkedFieldName="Account" reverseCheck="true" errorMsg="交易标识变更段[业务号]字段不能为空" errorCode="7101013"/>
+                    <rule name="rule7-3" checkType="NA" checkedFieldName="FinanceCode" reverseCheck="true" errorMsg="交易标识变更段[金融机构代码]字段不能为空" errorCode="6101013"/>
+                </checkrules>
+            </segment>
+            <segment name="G" segmentLength="224" opitional="true" unique="false">
+                <field name="G" type="A" startPosition="0" endPosition="0" opitional="false"/>
+                <field name="SpecType" type="N" startPosition="1" endPosition="1" opitional="false"/>
+                <field name="SpecDATE" type="A" startPosition="2" endPosition="9" opitional="false"/>
+                <field name="SpecMonth" type="A" startPosition="10" endPosition="13" opitional="false"/>
+                <field name="SpecMoney" type="A" startPosition="14" endPosition="23" opitional="false"/>
+                <field name="SpecDetail" type="A" startPosition="24" endPosition="223" opitional="false"/>
+                <checkrules>
+                    <rule name="rule8-1" checkType="DL" checkedFieldName="SpecType" dataList="1;2;3;9;" errorMsg="特殊交易段[特殊交易类型]字段不在数据字典列表中" errorCode="7113601"/>
+                    <rule name="rule8-2" checkType="D" checkedFieldName="SpecDATE" errorMsg="特殊交易段[发生日期]字段必须为有效日期" errorCode="2410009"/>
+                    <rule name="rule8-3" checkType="N" checkedFieldName="SpecMonth" strictLevel="1" errorMsg="特殊交易段[变更月数]字段必须为整数" errorCode="4418043"/>
+                    <rule name="rule8-4" checkType="N" checkedFieldName="SpecMoney" errorMsg="特殊交易段[发生金额]字段必须为数字型" errorCode="1416012"/>
+                    <rule name="rule8-5" checkType="NA" checkedFieldName="SpecDetail" reverseCheck="true" errorMsg="特殊交易段[明细信息]字段不能为空" errorCode="8101013"/>
+                </checkrules>
+            </segment>
+            <segment name="H" segmentLength="201" opitional="true" unique="false">
+                <field name="H" type="A" startPosition="0" endPosition="0" opitional="false"/>
+                <field name="SpecRecord" type="A" startPosition="1" endPosition="200" opitional="false"/>
+                <checkrules>
+                    <rule name="rule9-1" checkType="NA" checkedFieldName="SpecRecord" reverseCheck="true" errorMsg="特别记录段[特别记录信息]字段不能为空" errorCode="8102013"/>
+                </checkrules>
+            </segment>
+            <!--checkLevel描述检查级别，1为最高，可以为每一个检查规则设置一个检查级别，在检查的时候，只检查比设置的检查级别高的
+	     检查规则，如果没有设置检查级别，缺省为1-->
+            <checkrules>
+                <rule name="rule1" checkType="SN" checkedFieldName="A" dataStartValue="1" dataEndValue="1" errorMsg="每条记录有且只能有一个基础段，[错误代码：0000001]。" errorCode="0000001"/>
+                <rule name="rule2" checkType="SP" checkedFieldName="A" dataStartValue="0" errorMsg="不符合检查规则:记录中第一个段必须是基础段，[错误代码：0000001]。" errorCode="0000001"/>
+                <rule name="rule3" checkType="DE" checkedFieldName="{RecordHeader.recordLength}" compareWay="number" dataList="{$Checkedlength}" errorMsg="不符合检查规则：基础段中'帐户记录长度'字段值必须等于实际记录长度，[错误代码：0000002]。" errorCode="0000002">    	   		 
+			</rule>
+                <rule name="rule4" checkType="SN" checkedFieldName="B" dataStartValue="0" dataEndValue="1" errorMsg="每条记录最多只能有一个身份信息段，[错误代码：0000003]。" errorCode="0000003"/>
+                <rule name="rule5" checkType="SN" checkedFieldName="C" dataStartValue="0" dataEndValue="1" errorMsg="每条记录最多只能有一个职业信息段，[错误代码：0000003]。" errorCode="0000003"/>
+                <rule name="rule6" checkType="SN" checkedFieldName="D" dataStartValue="0" dataEndValue="1" errorMsg="每条记录最多只能有一个居住地址段，[错误代码：0000003]。" errorCode="0000003"/>
+                <rule name="rule7" checkType="SN" checkedFieldName="F" dataStartValue="0" dataEndValue="1" errorMsg="每条记录最多只能有一个交易标识变更段，[错误代码：0000003]。" errorCode="0000003"/>
+                <rule name="rule8" checkType="SN" checkedFieldName="G" dataStartValue="0" dataEndValue="1" errorMsg="每条记录最多只能有一个特殊交易段，[错误代码：0000003]。" errorCode="0000003"/>
+                <rule name="rule9" checkType="SN" checkedFieldName="H" dataStartValue="0" dataEndValue="1" errorMsg="每条记录最多只能有一个特别记录段，[错误代码：0000003]。" errorCode="0000003"/>
+                <rule name="rule10" checkType="SD" checkedFieldName="E" dataList="Name;CertType;CertNo" errorMsg="包含多个担保信息段，任意两个担保信息段的[姓名]、[证件类型]、[证件号码]不能完全相同，[错误代码：0000004]。" errorCode="0000004"/>
+                <rule name="rule11" checkType="DL" checkedFieldName="{A.GuaranteeWay}" dataList="3;5;" errorMsg="记录中包含担保信息段,并且担保信息段[担保关系]字段为担保，基础段中[担保方式]字段值必须含保证，[错误代码：0000006]。" errorCode="0000006">
+                    <precondition>
+                        <rule name="rule5" checkType="SN" checkedFieldName="E" dataStartValue="1" dataEndValue="100"/>
+                        <rule name="rule1" checkType="DL" checkedFieldName="{E.GuaranteeStat}" dataList="1;" parameterRange="record"/>
+                    </precondition>
+                </rule>
+                <rule name="rule12" checkType="DL" checkedFieldName="{A.A}" dataList="A;" reverseCheck="true" errorMsg="报文头中的[报文类别]字段值为'正常数据'时,交易标识变更段中[金融机构代码]、[业务号]字段值不能和基础段中[金融机构代码]、[业务号]字段项值相同，[错误代码：0000005]。" errorCode="0000005">
+                    <precondition>
+                        <rule name="rule0" checkType="DE" checkedFieldName="{$msgType}" dataList="1"/>
+                        <rule name="rule1" checkType="SN" checkedFieldName="F" dataStartValue="1" dataEndValue="1"/>
+                        <rule name="rule2" checkType="DL" checkedFieldName="{F.Account}" dataList="{$A.Account};"/>
+                        <rule name="rule3" checkType="DL" checkedFieldName="{F.FinanceCode}" dataList="{$A.FinanceCode};"/>
+                    </precondition>
+                </rule>
+                <rule name="rule13" checkType="DL" checkedFieldName="{A.A}" dataList="A;" reverseCheck="true" errorMsg="报文头中的[报文类别]字段值为'纠错数据'时,交易标识变更段中[金融机构代码]、[业务号]、[结算/应还款日期]字段值不能和基础段中[金融机构代码]、[业务号]、[结算/应还款日期]字段项值相同" errorCode="0000075">
+                    <precondition>
+                        <rule name="rule0" checkType="DE" checkedFieldName="{$msgType}" dataList="2"/>
+                        <rule name="rule1" checkType="SN" checkedFieldName="F" dataStartValue="1" dataEndValue="1"/>
+                        <rule name="rule2" checkType="DL" checkedFieldName="{F.Account}" dataList="{$A.Account};"/>
+                        <rule name="rule3" checkType="DL" checkedFieldName="{F.FinanceCode}" dataList="{$A.FinanceCode};"/>
+                        <rule name="rule4" checkType="DL" checkedFieldName="{F.BillingDATE}" dataList="{$A.BillingDATE};"/>
+                    </precondition>
+                </rule>
+                <rule name="rule14" checkType="DE" checkedFieldName="{F.BillingDATE}" checkedStartPosition="0" checkedEndPostion="6" dataList="{$dataYearMonth}" errorMsg="报文头中的[报文类别]字段值为'纠错数据'时,交易标识变更段中[结算/应还款日期]应与基础段中[结算/应还款日期]所在年月相同，[错误代码：0000075]。" errorCode="0000075">
+                    <precondition>
+                        <rule name="rule0" checkType="DE" checkedFieldName="{$msgType}" dataList="2"/>
+                        <rule name="rule1" checkType="SN" checkedFieldName="F" dataStartValue="1" dataEndValue="1"/>
+                    </precondition>
+                </rule>
+                <rule name="rule15" checkType="DE" checkedFieldName="{F.Account}" dataList="{$A.Account}" errorMsg="报文头中的'报文类别'字段值为'纠错数据'，基础段中的账户拥有者信息为'2-新账户开立'时，账户记录如果存在交易标识变更段，则交易标识变更段中[业务号]数据项值必须和基础段中[业务号]数据项值全部相同" errorCode="0000076">
+                    <precondition>
+                        <rule name="rule0" checkType="DE" checkedFieldName="{$msgType}" dataList="2"/>
+                        <rule name="rule0" checkType="DL" checkedFieldName="{A.tradeType}" dataList="2;"/>
+                        <rule name="rule1" checkType="SN" checkedFieldName="F" dataStartValue="1" dataEndValue="1"/>
+                    </precondition>
+                </rule>
+                <rule name="rule16" checkType="DE" checkedFieldName="{F.FinanceCode}" dataList="{$A.FinanceCode}" errorMsg="报文头中的'报文类别'字段值为'纠错数据'，基础段中的账户拥有者信息为'2-新账户开立'时，账户记录如果存在交易标识变更段，则交易标识变更段中[金融机构代码]数据项值必须和基础段中[金融机构代码]数据项值全部相同" errorCode="0000076">
+                    <precondition>
+                        <rule name="rule0" checkType="DE" checkedFieldName="{$msgType}" dataList="2"/>
+                        <rule name="rule0" checkType="DL" checkedFieldName="{A.tradeType}" dataList="2;"/>
+                        <rule name="rule1" checkType="SN" checkedFieldName="F" dataStartValue="1" dataEndValue="1"/>
+                    </precondition>
+                </rule>
+                <rule name="rule17" checkType="SN" checkedFieldName="E" dataStartValue="1" dataEndValue="100" errorMsg="基础段中的账户拥有者信息为'新账户开立'时，基础段中[担保方式]含保证时，担保信息段必须存在，[错误代码：0000007]。" errorCode="0000007">
+                    <precondition>
+                        <rule name="rule0" checkType="DL" checkedFieldName="{A.tradeType}" dataList="2;"/>
+                        <rule name="rule1" checkType="DL" checkedFieldName="{A.GuaranteeWay}" dataList="3;5;"/>
+                    </precondition>
+                </rule>
+                <rule name="rule18" checkType="DL" checkedFieldName="{E.GuaranteeStat}" dataList="1;" errorMsg="基础段中的账户拥有者信息为'新账户开立'时，基础段中[担保方式]含保证时，担保信息段[担保关系]字段必须为‘担保'，[错误代码：0000007]。" errorCode="0000007">
+                    <precondition>
+                        <rule name="rule0" checkType="DL" checkedFieldName="{A.tradeType}" dataList="2;"/>
+                        <rule name="rule1" checkType="DL" checkedFieldName="{A.GuaranteeWay}" dataList="3;5;"/>
+                        <rule name="rule2" checkType="SN" checkedFieldName="E" dataStartValue="1" dataEndValue="100"/>
+                    </precondition>
+                </rule>
+                <rule name="rule19" checkType="SN" checkedFieldName="F" dataList="1;" dataStartValue="0" dataEndValue="0" errorMsg="报文头中的[报文类别]字段值为'正常数据'，当基础段中的[账户拥有者信息]字段'新账户开立'时，不能包含交易标识变更段，[错误代码：0000008]。" errorCode="0000008">
+                    <precondition>
+                        <rule name="rule0" checkType="DE" checkedFieldName="{$msgType}" dataList="1"/>
+                        <rule name="rule1" checkType="DL" checkedFieldName="{A.tradeType}" dataList="2;"/>
+                    </precondition>
+                </rule>
+                <rule name="rule20" checkType="SN" checkedFieldName="B" dataStartValue="1" errorMsg="基础段中的账户拥有者信息为'新账户开立'时，必须包括身份信息段，[错误代码：0000065]。" errorCode="0000065">
+                    <precondition>
+                        <rule name="rule1" checkType="DL" checkedFieldName="{A.tradeType}" dataList="2;"/>
+                    </precondition>
+                </rule>
+                <rule name="rule21" checkType="SN" checkedFieldName="C" dataStartValue="1" errorMsg="基础段中的账户拥有者信息为'新账户开立'时，必须包括职业信息段，[错误代码：0000065]。" errorCode="0000065">
+                    <precondition>
+                        <rule name="rule1" checkType="DL" checkedFieldName="{A.tradeType}" dataList="2;"/>
+                    </precondition>
+                </rule>
+                <rule name="rule22" checkType="SN" checkedFieldName="D" dataStartValue="1" errorMsg="基础段中的账户拥有者信息为'新账户开立'时，必须包括居住地址段，[错误代码：0000065]。" errorCode="0000065">
+                    <precondition>
+                        <rule name="rule1" checkType="DL" checkedFieldName="{A.tradeType}" dataList="2;"/>
+                    </precondition>
+                </rule>
+                <rule name="rule23" checkType="DR" checkedFieldName="{G.SpecDATE}" dataStartValue="{$A.DataOpened}" dataEndValue="{$systemdate}" errorMsg="特殊交易段的[发生日期]字段值必须大于等于基础段[开户日期]字段值同时小于等于系统当前日期，[错误代码：2410042]。" errorCode="2410042">
+                    <precondition>
+                        <rule name="rule5" checkType="SN" checkedFieldName="G" dataStartValue="1" dataEndValue="100"/>
+                    </precondition>
+                </rule>
+                <rule name="rule24" checkType="DR" checkedFieldName="{F.BillingDATE}" dataStartValue="{$A.DataOpened}" dataEndValue="{$systemdate}" errorMsg="交易标识变更段的[结算/应还款日期]字段值必须大于等于基础段[开户日期]字段值同时小于等于系统当前日期，[错误代码：2301041]。" errorCode="2301041">
+                    <precondition>
+                        <rule name="rule5" checkType="SN" checkedFieldName="F" dataStartValue="1" dataEndValue="1"/>
+                    </precondition>
+                </rule>
+            </checkrules>
+        </message>
+        <message tasktype="4" version="1.1" headerLength="147" readerVersion="1.1" charset="GB18030">
+            <segment name="Head" segmentLength="147" opitional="false" unique="true">
+                <field name="Version" type="A" startPosition="0" endPosition="2" opitional="false"/>
+                <field name="FinianceCode" type="A" startPosition="3" endPosition="16" opitional="false"/>
+                <field name="CreatedTime" type="A" startPosition="17" endPosition="30" opitional="false"/>
+                <field name="ProgramVersion" type="A" startPosition="31" endPosition="33" opitional="false"/>
+                <field name="RetryTips" type="N" startPosition="34" endPosition="34" opitional="false"/>
+                <field name="MsgType" type="N" startPosition="35" endPosition="35" opitional="false"/>
+                <field name="TotalRecords" type="N" startPosition="36" endPosition="45" opitional="false"/>
+                <field name="FirstDate" type="A" startPosition="46" endPosition="53" opitional="false"/>
+                <field name="LastDate" type="A" startPosition="54" endPosition="61" opitional="false"/>
+                <field name="ContactPerson" type="A" startPosition="62" endPosition="91" opitional="false"/>
+                <field name="ContactPhone" type="A" startPosition="92" endPosition="116" opitional="false"/>
+                <field name="reservered" type="A" startPosition="117" endPosition="146" length="30" opitional="false"/>
+                <dataSource>
+                    <sharedData name="msgType" range="global" type="String" sourceData="{$MsgType}"/>
+                    <sharedData name="checkLevel" range="global" type="String" sourceData="1"/>
+                    <sharedData name="CreatedTime" range="global" type="String" sourceData="{$CreatedTime}"/>
+                    <sharedData name="FirstTime" range="global" type="String" sourceData="{$FirstDate}"/>
+                    <sharedData name="LastTime" range="global" type="String" sourceData="{$LastDate}"/>
+                </dataSource>
+                <checkrules>
+                    <rule name="rule1-21" checkType="DE" checkedFieldName="{$fileName}" checkedStartPosition="0" checkedEndPostion="14" dataList="{$FinianceCode}" errorMsg="报文头[金融机构代码]与文件名中不一致" errorCode="06"/>
+                    <rule name="rule1-2" checkType="D" checkedFieldName="CreatedTime" errorMsg="报文头部[报文生成时间]字段不是有效时间" errorCode="07"/>
+                    <rule name="rule1-3" checkType="DR" checkedFieldName="CreatedTime" checkedStartPosition="0" checkedEndPostion="8" dataStartValue="20040101" dataEndValue="{$systemdate}" errorMsg="报文头部[报文生成时间]字段检查错误：报文生成时间年份必须大于等于2004，同时字段值必须小于等于当前系统时间" errorCode="07"/>
+                    <rule name="rule1-5" checkType="D" checkedFieldName="FirstDate" errorMsg="报文头[最早结算/应还款日期]字段不是有效日期" errorCode="08"/>
+                    <rule name="rule1-6" checkType="DR" checkedFieldName="FirstDate" dataStartValue="19000101" dataEndValue="{$systemdate}" errorMsg="报文头[最早结算/应还款日期]字段必须位于1900年1月1日和当前系统时间之间" errorCode="08"/>
+                    <rule name="rule1-7" checkType="D" checkedFieldName="LastDate" errorMsg="报文头[最晚结算/应还款日期]字段不是有效日期" errorCode="08"/>
+                    <rule name="rule1-8" checkType="DR" checkedFieldName="LastDate" dataStartValue="{$FirstDate}" dataEndValue="{$systemdate}" errorMsg="报文头[最晚结算/应还款日期]字段必须大于等于[最早结算/应还款日期]字段同时小于等于当前系统时间" errorCode="08"/>
+                    <rule name="rule1-18" checkType="DE" checkedFieldName="LastDate" checkedStartPosition="0" checkedEndPostion="6" dataList="{$dataYearMonth}" errorMsg="报文头[最晚结算/应还款日期]字段年月值必须与文件名一致" errorCode="08"/>
+                    <rule name="rule1-19" checkType="DE" checkedFieldName="FirstDate" checkedStartPosition="0" checkedEndPostion="6" dataList="{$dataYearMonth}" errorMsg="报文头[最早结算/应还款日期]字段年月值必须与文件名一致" errorCode="08"/>
+                    <rule name="rule1-15" checkType="DE" checkedFieldName="{$fileName}" checkedStartPosition="24" checkedEndPostion="25" dataList="{$RetryTips}-1" errorMsg="报文头[重报提示]与文件名不一致" errorCode="09"/>
+                    <rule name="rule1-16" checkType="DE" checkedFieldName="{$fileName}" checkedStartPosition="23" checkedEndPostion="24" dataList="{$MsgType}" errorMsg="报文头[报文类别]与文件名不一致" errorCode="09">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="{$fileName}" checkedStartPosition="24" checkedEndPostion="25" dataList="0;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule1-17" checkType="DE" checkedFieldName="{$fileName}" checkedStartPosition="25" checkedEndPostion="26" dataList="{$MsgType}" errorMsg="报文头[报文类别]与文件名不一致" errorCode="09">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="{$fileName}" checkedStartPosition="24" checkedEndPostion="25" dataList="1;2;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule1-10" checkType="NA" checkedFieldName="ContactPerson" reverseCheck="true" errorMsg="报文头[联系人]字段不能为空" errorCode="11"/>
+                    <rule name="rule1-11" checkType="NA" checkedFieldName="ContactPhone" reverseCheck="true" errorMsg="报文头[联系电话]字段不能为空" errorCode="11"/>
+                </checkrules>
+            </segment>
+            <segment name="RecordHeader" segmentLength="4">
+                <field name="recordLength" type="N" startPosition="0" endPosition="3" opitional="false"/>
+            </segment>
+            <segment name="A" segmentLength="341" opitional="false" unique="true">
+                <field name="A" type="A" startPosition="0" endPosition="0" opitional="false"/>
+                <field name="FinanceCode" type="A" startPosition="1" endPosition="14" opitional="false"/>
+                <field name="GeneralType" type="A" startPosition="15" endPosition="15" opitional="false"/>
+                <field name="Type" type="A" startPosition="16" endPosition="17" opitional="false"/>
+                <field name="Account" type="A" startPosition="18" endPosition="57" opitional="false"/>
+                <field name="Area" type="A" startPosition="58" endPosition="63" opitional="false"/>
+                <field name="DataOpened" type="A" startPosition="64" endPosition="71" opitional="false"/>
+                <field name="DateClosed" type="A" startPosition="72" endPosition="79" opitional="false"/>
+                <field name="Currency" type="A" startPosition="80" endPosition="82" opitional="false"/>
+                <field name="CreditLimit" type="N" startPosition="83" endPosition="92" opitional="false"/>
+                <field name="SharedCredit" type="N" startPosition="93" endPosition="102" opitional="false"/>
+                <field name="MaxDebt" type="N" startPosition="103" endPosition="112" opitional="false"/>
+                <field name="GuaranteeWay" type="A" startPosition="113" endPosition="113" opitional="false"/>
+                <field name="TermsFreq" type="A" startPosition="114" endPosition="115" opitional="false"/>
+                <field name="MonthDuration" type="A" startPosition="116" endPosition="118" opitional="false"/>
+                <field name="MonthUnpaid" type="A" startPosition="119" endPosition="121" opitional="false"/>
+                <field name="BillingDATE" type="A" startPosition="122" endPosition="129" opitional="false"/>
+                <field name="RecentPayDATE" type="A" startPosition="130" endPosition="137" opitional="false"/>
+                <field name="ScheduledAmount" type="N" startPosition="138" endPosition="147" opitional="false"/>
+                <field name="ActualPayAmount" type="N" startPosition="148" endPosition="157" opitional="false"/>
+                <field name="Balance" type="N" startPosition="158" endPosition="167" opitional="false"/>
+                <field name="Terms_PastDue" type="N" startPosition="168" endPosition="169" opitional="false"/>
+                <field name="Amount_PastDue" type="N" startPosition="170" endPosition="179" opitional="false"/>
+                <field name="AmountPastDue30" type="N" startPosition="180" endPosition="189" opitional="false"/>
+                <field name="AmountPastDue60" type="N" startPosition="190" endPosition="199" opitional="false"/>
+                <field name="AmountPastDue90" type="N" startPosition="200" endPosition="209" opitional="false"/>
+                <field name="AmountPastDue180" type="N" startPosition="210" endPosition="219" opitional="false"/>
+                <field name="TermsPastDue" type="N" startPosition="220" endPosition="222" opitional="false"/>
+                <field name="MaxTerms_PastDue" type="N" startPosition="223" endPosition="224" opitional="false"/>
+                <field name="AccountLevelStat" type="N" startPosition="225" endPosition="225" opitional="false"/>
+                <field name="AccountStat" type="A" startPosition="226" endPosition="226" opitional="false"/>
+                <field name="PayStat_24Month" type="A" startPosition="227" endPosition="250" opitional="false" ignoreBlank="false"/>
+                <field name="Unpaid180" type="N" startPosition="251" endPosition="260" opitional="false"/>
+                <field name="tradeType" type="A" startPosition="261" endPosition="261" opitional="false"/>
+                <field name="Name" type="A" startPosition="262" endPosition="291" opitional="false"/>
+                <field name="CertType" type="A" startPosition="292" endPosition="292" opitional="false"/>
+                <field name="CertNo" type="A" startPosition="293" endPosition="310" opitional="false"/>
+                <field name="ReservedA" type="A" startPosition="311" endPosition="340" opitional="false"/>
+                <checkrules>
+                    <rule name="rule2-1" checkType="DL" checkedFieldName="GeneralType" reverseCheck="false" dataList="1;2;" errorMsg="基础段[业务种类]字段不在数据字典中" errorCode="7117101"/>
+                    <rule name="rule2-2" checkType="DL" checkedFieldName="Type" reverseCheck="false" dataList="11;12;21;31;41;99;" errorMsg="基础段中[业务种类]数据项值为'1-贷款'时，[业务种类细分]数据项值只能填写填写'贷款'项下的代码" errorCode="7111016">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-3" checkType="DL" checkedFieldName="Type" reverseCheck="false" dataList="71;81;99;" errorMsg="基础段中[业务种类]数据项值为'2-信用卡'时，[业务种类细分]数据项值只能填写'信用卡'项下的代码" errorCode="7111017">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="2;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-3-1" checkType="N" checkedFieldName="Area" errorMsg="基础段[发生地点]字段值数字型检查错误" errorCode="3141012"/>
+                    <rule name="rule2-4" checkType="D" checkedFieldName="DataOpened" errorMsg="基础段[开户日期]字段不是有效日期" errorCode="2101009">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-7" checkType="D" checkedFieldName="DateClosed" errorMsg="基础段[到期日期]字段不是有效日期" errorCode="2103009">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-5" checkType="DR" checkedFieldName="DataOpened" dataStartValue="19000101" dataEndValue="{$DateClosed}" errorMsg="基础段[开户日期]字段必须大于等于1900年1月1日并且小于等于[到期日期]字段" errorCode="2101015"/>
+                    <rule name="rule2-6" checkType="DR" checkedFieldName="DataOpened" dataStartValue="19000101" dataEndValue="{$BillingDATE}" errorMsg="基础段[开户日期]字段必须大于等于1900年1月1日并且小于等于[结算/应还款日期]字段" errorCode="2101015"/>
+                    <rule name="rule2-6-1" checkType="DR" checkedFieldName="DataOpened" dataStartValue="19000101" dataEndValue="{$CreatedTime}" compareWay="String" errorMsg="基础段[开户日期]字段必须大于等于1900年1月1日并且小于等于报文头[报文生成时间]字段" errorCode="2101015"/>
+                    <rule name="rule2-8" checkType="DL" checkedFieldName="DateClosed" dataList="20991231;" errorMsg="当[业务种类]字段为信用卡时，[到期日期]必须为'20991231'" errorCode="2103015">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="2;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-9" checkType="DL" checkedFieldName="Currency" reverseCheck="false" dataList="CNY;HKD;USD" errorMsg="基础段[币种]字段不在数据字典列表中" errorCode="1418104"/>
+                    <rule name="rule2-10" checkType="N" checkedFieldName="CreditLimit" errorMsg="基础段[授信额度]字段值数字型检查错误" errorCode="1101012"/>
+                    <rule name="rule2-11" checkType="N" checkedFieldName="MaxDebt" errorMsg="基础段[最大负债额]字段值数字型检查错误" errorCode="1103012"/>
+                    <rule name="rule2-12" checkType="DR" checkedFieldName="CreditLimit" dataStartValue="{$MaxDebt}" errorMsg="(基础段中[业务种类]数据项值为'1-贷款'时，[授信额度]必须大于等于[最大负债额]" errorCode="1101018">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-13" checkType="N" checkedFieldName="SharedCredit" errorMsg="基础段[共享授信额度]字段值数字型检查错误" errorCode="1102012"/>
+                    <rule name="rule2-15" checkType="DL" checkedFieldName="GuaranteeWay" dataList="1;2;3;4;5;6;9;" errorMsg="基础段[担保方式]字段不在数据字典列表中" errorCode="7115105"/>
+                    <rule name="rule2-16" checkType="DL" checkedFieldName="TermsFreq" dataList="01;02;03;04;05;06;07;08;99;" errorMsg="基础段[业务种类]为'贷款'时，[还款频率]字段必须为'C'以外的数据字典中的值" errorCode="4111019">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-17" checkType="DL" checkedFieldName="TermsFreq" dataList="C;" errorMsg="基础段[业务种类]为'信用卡'时，[还款频率]字段必须用'C'填充" errorCode="4111019">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="2;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-18" checkType="N" checkedFieldName="MonthDuration" strictLevel="2" errorMsg="业务种类为贷款,还款频率不为一次性还款、不定期还款和其他类型还款时，基础段[还款月数]字段值必须为整数" errorCode="4101020">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" reverseCheck="true" checkedFieldName="TermsFreq" dataList="07;"/>
+                            <rule name="rule3" checkType="DL" reverseCheck="true" checkedFieldName="TermsFreq" dataList="08;"/>
+                            <rule name="rule4" checkType="DL" reverseCheck="true" checkedFieldName="TermsFreq" dataList="99;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-19" checkType="DL" checkedFieldName="MonthDuration" dataList="C;" errorMsg="基础段[业务种类]字段为'信用卡'时，[还款月数]字段必须用'C'填充" errorCode="4101019">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="2;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-20" checkType="DL" checkedFieldName="MonthDuration" dataList="O;" errorMsg="基础段[业务种类]字段为'贷款'时，当[还款频率]字段为一次性时，[还款月数]字段必须用'O'填充" errorCode="4101020">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="TermsFreq" dataList="07;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-21" checkType="DL" checkedFieldName="MonthDuration" dataList="U;" errorMsg="基础段[业务种类]字段为'贷款'时，，当[还款频率]字段为不定期时，[还款月数]字段必须用'U'填充" errorCode="4101020">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="TermsFreq" dataList="08;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-22" checkType="DL" checkedFieldName="MonthDuration" dataList="X;" errorMsg="基础段[业务种类]字段为'贷款'时，，当[还款频率]字段为其它时，[还款月数]字段必须用'X'填充" errorCode="4101020">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="TermsFreq" dataList="99;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-23" checkType="DR" checkedFieldName="MonthDuration" dataStartValue="{$MonthUnpaid}" errorMsg="还款月数]字段值必须大于等于[剩余还款月数]字段值" errorCode="4101026">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="TermsFreq" dataList="01;02;03;04;05;06;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-24" checkType="DL" checkedFieldName="MonthUnpaid" dataList="C;" errorMsg="当[业务种类]字段值为信用卡时，[剩余还款月数]字段必须用'C'填充" errorCode="4105019">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="2;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-24-1" checkType="N" checkedFieldName="MonthUnpaid" strictLevel="2" errorMsg="业务种类为贷款,还款频率不为一次性还款、不定期还款和其他类型还款时，基础段[剩余还款月数]字段值必须为整数" errorCode="4105020">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" reverseCheck="true" checkedFieldName="TermsFreq" dataList="07;"/>
+                            <rule name="rule3" checkType="DL" reverseCheck="true" checkedFieldName="TermsFreq" dataList="08;"/>
+                            <rule name="rule4" checkType="DL" reverseCheck="true" checkedFieldName="TermsFreq" dataList="99;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-25" checkType="DL" checkedFieldName="MonthUnpaid" dataList="O;" errorMsg="当[还款频率]字段值为一次性时，[剩余还款月数]字段必须用'O'填充" errorCode="4105020">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="TermsFreq" dataList="07;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-26" checkType="DL" checkedFieldName="MonthUnpaid" dataList="U;" errorMsg="当[还款频率]字段值为不定期时，[剩余还款月数]字段必须用'U'填充" errorCode="4105020">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="TermsFreq" dataList="08;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-27" checkType="DL" checkedFieldName="MonthUnpaid" dataList="X;" errorMsg="当[还款频率]字段为其它时，[剩余还款月数]字段必须用'X'填充" errorCode="4105020">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="TermsFreq" dataList="99;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-28" checkType="D" checkedFieldName="BillingDATE" errorMsg="基础段[结算/应还款日期]字段不是有效日期" errorCode="2301009"/>
+                    <rule name="rule2-29" checkType="DR" checkedFieldName="BillingDATE" dataStartValue="{$FirstTime}" dataEndValue="{$LastTime}" errorMsg="基础段中[结算/应还款日期]必须大于等于[最早结算/应还款日期]且小于等于[最晚结算/应还款日期]" errorCode="2301027"/>
+                    <rule name="rule2-31" checkType="D" checkedFieldName="RecentPayDATE" errorMsg="基础段[最近一次实际还款日期]字段不是有效日期" errorCode="2107009"/>
+                    <rule name="rule2-32" checkType="DR" checkedFieldName="RecentPayDATE" dataStartValue="{$DataOpened}" errorMsg="[最近一次实际还款日期]字段需要大于等于[开户日期]字段" errorCode="2107028"/>
+                    <rule name="rule2-33" checkType="DR" checkedFieldName="RecentPayDATE" dataEndValue="{$BillingDATE}" errorMsg="当[结算/应还款日期]字段所在月大于'200412'时，[最近一次实际还款日期]字段需要小于等于[结算/应还款日期]字段" errorCode="2107028">
+                        <precondition>
+                            <rule name="rule1" checkType="DR" checkedFieldName="{$dataYearMonth}" dataStartValue="200501"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-33-1" checkType="DR" checkedFieldName="RecentPayDATE" checkedStartPosition="0" checkedEndPostion="6" dataEndValue="{$dataYearMonth}" errorMsg="当[结算/应还款日期]字段所在月小于等于'200412'时，[最近一次实际还款日期]字段值所在月需要小于等于[结算/应还款日期]字段值所在月" errorCode="2107028">
+                        <precondition>
+                            <rule name="rule1" checkType="DR" checkedFieldName="{$dataYearMonth}" reverseCheck="true" dataStartValue="200501"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-34" checkType="N" checkedFieldName="ScheduledAmount" errorMsg="基础段[本月应还款金额]字段值数字型检查错误" errorCode="1105012"/>
+                    <rule name="rule2-35" checkType="N" checkedFieldName="ActualPayAmount" errorMsg="基础段[实际还款金额]字段数字型检查错误" errorCode="1107012"/>
+                    <rule name="rule2-37" checkType="N" checkedFieldName="Balance" errorMsg="基础段[余额]字段数字型检查错误" errorCode="1109012"/>
+                    <rule name="rule2-38" checkType="DR" checkedFieldName="Balance" dataEndValue="{$MaxDebt}" errorMsg="基础段[余额]字段值必须小于等于[最大负债额]字段值" errorCode="1103029"/>
+                    <rule name="rule2-38-1" checkType="DR" checkedFieldName="Balance" dataStartValue="{$AmountPastDue30}+{$AmountPastDue60}+{$AmountPastDue90}+{$AmountPastDue180}-2" errorMsg="业务种类为贷款时，基础段中[逾期31-60天未归还贷款本金[＋[逾期61-90天未归还贷款本金]+[逾期91-180天未归还贷款本金]＋[逾期180天以上未归还贷款本金]必须小于等于[余额]＋2" errorCode="1109031">
+                        <precondition>
+                            <rule name="rule2" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-38-2" checkType="DR" checkedFieldName="Balance" dataStartValue="{$Amount_PastDue}" errorMsg="基础段中[业务种类]数据项值为'2-信用卡'，且[业务种类细分]数据项值为'贷记卡'时，[余额]字段值必须大于等于[当前逾期总额]字段值" errorCode="1109030">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="Type" dataList="81;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-38-2" checkType="DE" checkedFieldName="Balance" compareWay="number" dataList="0" errorMsg="当[业务种类]字段值为贷款,[账户状态]为结清,[余额]字段必须为'0'" errorCode="1109022">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="AccountStat" dataList="3;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-39" checkType="N" checkedFieldName="Terms_PastDue" errorMsg="基础段[当前逾期期数]字段数字型检查错误" errorCode="4109012"/>
+                    <rule name="rule2-40-1" checkType="DE" checkedFieldName="Terms_PastDue" compareWay="number" dataList="0" errorMsg="当[业务种类]字段值为贷款,[账户状态]为结清,[当前逾期期数]字段必须为'0'" errorCode="4109022">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="AccountStat" dataList="3;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-41" checkType="DR" checkedFieldName="Terms_PastDue" dataEndValue="{$MaxTerms_PastDue}" errorMsg="当[业务种类]为贷款时,基础段[当前逾期期数]必须小于等于[最高逾期期数]字段值" errorCode="4109032">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-41-1" checkType="DR" checkedFieldName="Terms_PastDue" dataStartValue="1" errorMsg="[业务种类]为贷款,[账户状态]为'逾期'或者'呆帐',[当前逾期期数]不能为0" errorCode="4109021">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="AccountStat" dataList="2;4;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-41-2" checkType="DR" checkedFieldName="Amount_PastDue" dataStartValue="1" errorMsg="[业务种类]为贷款,[账户状态]为'逾期'或者'呆帐',[当前逾期总额]不能为0" errorCode="1111021">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="AccountStat" dataList="2;4;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-42" checkType="N" checkedFieldName="Amount_PastDue" errorMsg="基础段[当前逾期总额]字段数字型检查错误" errorCode="1111012"/>
+                    <rule name="rule2-43" checkType="DE" checkedFieldName="Amount_PastDue" compareWay="number" dataList="0" errorMsg="基础段中[当前逾期期数]、[当前逾期总额]两数据项值或同时为零或同时不为零" errorCode="4109067">
+                        <precondition>
+                            <rule name="rule1" checkType="DE" checkedFieldName="Terms_PastDue" compareWay="number" dataList="0"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-43-1" checkType="DE" checkedFieldName="Terms_PastDue" compareWay="number" dataList="0" errorMsg="基础段中[当前逾期期数]、[当前逾期总额]两数据项值或同时为零或同时不为零" errorCode="4109067">
+                        <precondition>
+                            <rule name="rule1" checkType="DE" checkedFieldName="Amount_PastDue" compareWay="number" dataList="0"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-43-2" checkType="DE" checkedFieldName="Amount_PastDue" compareWay="number" dataList="0" errorMsg="当[业务种类]字段值为贷款,[账户状态]为结清,[当前逾期总额]字段必须为'0'" errorCode="1111022">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="AccountStat" dataList="3;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-45" checkType="N" checkedFieldName="AmountPastDue30" errorMsg="基础段[逾期31-60天未归还贷款本金]字段数字型检查错误" errorCode="1113012"/>
+                    <rule name="rule2-46-1" checkType="DE" checkedFieldName="AmountPastDue30" compareWay="number" dataList="0" errorMsg="当[业务种类]字段为贷款，[账户拥有者信息提示]为新账户开立,并且[结算/应还款日期]所在月等于[开户日期]所在月，[逾期31-60天未归还贷款本金]字段必须为'0'" errorCode="1113036">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="tradeType" dataList="2;"/>
+                            <rule name="rule3" checkType="DE" checkedFieldName="DataOpened" checkedStartPosition="0" checkedEndPostion="6" dataList="{$dataYearMonth}"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-47" checkType="N" checkedFieldName="AmountPastDue60" errorMsg="基础段[逾期61-90天未归还贷款本金]字段数字型检查错误" errorCode="1115012"/>
+                    <rule name="rule2-48-1" checkType="DE" checkedFieldName="AmountPastDue60" compareWay="number" dataList="0" errorMsg="当[业务种类]字段为贷款，[账户拥有者信息提示]为新账户开立,并且[结算/应还款日期]所在月等于[开户日期]所在月,[逾期61-90天未归还贷款本金]字段必须为'0'" errorCode="1115036">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="tradeType" dataList="2;"/>
+                            <rule name="rule3" checkType="DE" checkedFieldName="DataOpened" checkedStartPosition="0" checkedEndPostion="6" dataList="{$dataYearMonth}"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-49" checkType="N" checkedFieldName="AmountPastDue90" errorMsg="基础段[逾期91-180天未归还贷款本金]字段数字型检查错误" errorCode="1117012"/>
+                    <rule name="rule2-50-1" checkType="DE" checkedFieldName="AmountPastDue90" compareWay="number" dataList="0" errorMsg="当[业务种类]字段为贷款，[账户拥有者信息提示]为新账户开立,并且[结算/应还款日期]所在月等于[开户日期]所在月,[逾期91-180天未归还贷款本金]字段必须为'0'" errorCode="1117036">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="tradeType" dataList="2;"/>
+                            <rule name="rule3" checkType="DE" checkedFieldName="DataOpened" checkedStartPosition="0" checkedEndPostion="6" dataList="{$dataYearMonth}"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-51" checkType="N" checkedFieldName="AmountPastDue180" errorMsg="基础段[逾期180天以上未归还贷款本金]字段数字型检查错误" errorCode="1119012"/>
+                    <rule name="rule2-52-1" checkType="DE" checkedFieldName="AmountPastDue180" compareWay="number" dataList="0" errorMsg="当[业务种类]字段为贷款，[账户拥有者信息提示]为新账户开立,并且[结算/应还款日期]所在月等于[开户日期]所在月,[逾期180天以上未归还贷款本金]字段必须为'0'" errorCode="1119036">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="tradeType" dataList="2;"/>
+                            <rule name="rule3" checkType="DE" checkedFieldName="DataOpened" checkedStartPosition="0" checkedEndPostion="6" dataList="{$dataYearMonth}"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-44" checkType="DR" checkedFieldName="Amount_PastDue" dataStartValue="{$AmountPastDue30}+{$AmountPastDue60}+{$AmountPastDue90}+{$AmountPastDue180}-2" errorMsg="基础段中[逾期31-60天未归还贷款本金]＋[逾期61-90天未归还贷款本金]＋[逾期91-180天未归还贷款本金]＋[逾期180天以上未归还贷款本金]小于等于[当前逾期总额]＋2" errorCode="1111033">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-53" checkType="N" checkedFieldName="TermsPastDue" errorMsg="基础段[违约次数]字段数字型检查错误" errorCode="4312012"/>
+                    <rule name="rule2-54-1" checkType="DR" checkedFieldName="TermsPastDue" dataStartValue="1" errorMsg="当[业务种类]字段为贷款，[账户状态]为'逾期'或者'呆帐',[违约次数]字段不能为0" errorCode="4312021">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="AccountStat" dataList="2;4;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-55" checkType="N" checkedFieldName="MaxTerms_PastDue" errorMsg="基础段[最高逾期期数]字段数字型检查错误" errorCode="4107012"/>
+                    <rule name="rule2-56-1" checkType="DR" checkedFieldName="MaxTerms_PastDue" dataStartValue="1" errorMsg="当[业务种类]字段为贷款，[账户状态]为'逾期'或者'呆帐',[最高逾期期数]字段不能为0" errorCode="4107021">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="AccountStat" dataList="2;4;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-57" checkType="DR" checkedFieldName="MaxTerms_PastDue" dataEndValue="{$TermsPastDue}" errorMsg="基础段中[业务种类]为'1-贷款'时,[最高逾期期数]必须小于等于[违约次数]字段值" errorCode="4109032">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-58" checkType="DL" checkedFieldName="AccountLevelStat" dataList="1;2;3;4;5;9;" errorMsg="基础段[五级分类状态]不在数据字典列表中" errorCode="7105107"/>
+                    <rule name="rule2-59" checkType="DL" checkedFieldName="AccountStat" dataList="1;2;3;4;" errorMsg="基础段中[业务种类]数据项值为'1-贷款'时，[账户状态]数据项值必须填写'贷款'项下的代码" errorCode="7109016">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-60" checkType="DL" checkedFieldName="AccountStat" dataList="1;2;3;4;5;" errorMsg="基础段中[业务种类]数据项值为'2-信用卡'时，[账户状态]数据项值必须填写'信用卡'项下的代码" errorCode="7109017">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="2;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-61" checkType="DL" checkedFieldName="PayStat_24Month" iterateLength="1" dataList="/;*;N;1;2;3;4;5;6;7;D;Z;G;C;#;" errorMsg="基础段中[业务种类]数据项值为'1-贷款'时，[24个月（账户）还款状态]数据项值必须填写'贷款'项下的代码" errorCode="7107016">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-62" checkType="DL" checkedFieldName="PayStat_24Month" iterateLength="1" dataList="/;*;1;2;3;4;5;6;7;N;G;C;#;" errorMsg="基础段中[业务种类]数据项值为'2-信用卡'时，[24个月（账户）还款状态]数据项值必须填写'信用卡'项下的代码" errorCode="7107017">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="2;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-62-1" checkType="DL" checkedFieldName="PayStat_24Month" checkedStartPosition="23" checkedEndPostion="24" dataList="1;2;3;4;5;6;7;#" errorMsg="当[业务种类]字段为贷款，[账户状态]为'逾期'或者'呆帐',当前月状态必须为1～7的数字或者'#'" errorCode="7107021">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="AccountStat" dataList="2;4;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-62-2" checkType="DL" checkedFieldName="PayStat_24Month" checkedStartPosition="23" checkedEndPostion="24" dataList="C;" errorMsg="当[业务种类]字段值为贷款,[账户状态]为结清,基础段[24个月（账户）还款状态]字段最后一个月状态必须为'C'" errorCode="7107022">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="AccountStat" dataList="3;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-62-3" checkType="DL" checkedFieldName="PayStat_24Month" checkedStartPosition="23" checkedEndPostion="24" dataList="C;G;" errorMsg="当[业务种类]字段值为信用卡,[账户状态]为销户时,当前月状态必须为'C'或'G'" errorCode="7107023">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="2;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="AccountStat" dataList="4;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-62-4" checkType="PS" checkedFieldName="PayStat_24Month" dataList="/;" dataStartValue="{$DataOpened}" dataEndValue="{$BillingDATE}" errorMsg="基础段[24个月（账户）还款状态]字段检查错误：'开户日期'所在月之前各月还款状态必须为'/'，'开户日期'所在月之后各月还款状态不能为'/'" errorCode="7107068">	
+		</rule>
+                    <rule name="rule2-63" checkType="DL" checkedFieldName="PayStat_24Month" checkedStartPosition="23" checkedEndPostion="24" dataList="7;" errorMsg="基础段[24个月（账户）还款状态]字段不符合检查规则:[业务种类细分]字段为准贷记卡，[透支180天以上未付余额]字段值不为0，[24个月（账户）还款状态]字段最后一位为数值，则最后一位必须为'7'" errorCode="7111025">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="Type" dataList="71;"/>
+                            <rule name="rule2" checkType="DE" checkedFieldName="Unpaid180" reverseCheck="true" compareWay="number" dataList="0"/>
+                            <rule name="rule3" checkType="N" checkedFieldName="PayStat_24Month" checkedStartPosition="23" checkedEndPostion="24"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-63-1" checkType="DE" checkedFieldName="Unpaid180" compareWay="number" dataList="{$Balance}" errorMsg="基础段[24个月（账户）还款状态]字段不符合检查规则:[业务种类细分]字段为准贷记卡，[透支180天以上未付余额]字段值不为0，[24个月（账户）还款状态]字段当前月状态为数值，则[透支180天以上未付余额]=[余额]" errorCode="7111025">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="Type" dataList="71;"/>
+                            <rule name="rule2" checkType="DE" checkedFieldName="Unpaid180" reverseCheck="true" compareWay="number" dataList="0"/>
+                            <rule name="rule3" checkType="N" checkedFieldName="PayStat_24Month" checkedStartPosition="23" checkedEndPostion="24"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-64" checkType="DE" checkedFieldName="ScheduledAmount" compareWay="number" dataList="0" errorMsg="[24个月账户还款状态] 中当月状态为'*'时,[本月应还款金额]字段值必须为0" errorCode="1105035">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="PayStat_24Month" checkedStartPosition="23" checkedEndPostion="24" dataList="*;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-65" checkType="DL" checkedFieldName="PayStat_24Month" checkedStartPosition="23" checkedEndPostion="24" reverseCheck="true" dataList="7;" errorMsg="[业务种类细分]字段为准贷记卡，[透支180天以上未付余额]字段值为0，[24个月（账户）还款状态]字段最后一位必须不为'7'" errorCode="7111025">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="Type" dataList="71;"/>
+                            <rule name="rule2" checkType="DE" compareWay="number" checkedFieldName="Unpaid180" dataList="0"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-68" checkType="DR" checkedFieldName="ActualPayAmount" dataStartValue="{$ScheduledAmount}" errorMsg="[24个月（账户）还款状态]字段当前月为'N',[实际还款金额]字段必须大于等于[本月应还款金额]字段值" errorCode="1105024">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="PayStat_24Month" checkedStartPosition="23" checkedEndPostion="24" dataList="N;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-70" checkType="N" checkedFieldName="Unpaid180" errorMsg="基础段[透支180天以上未付余额]字段数字型检查错误" errorCode="1210012"/>
+                    <rule name="rule2-71-1" checkType="DE" checkedFieldName="Unpaid180" compareWay="number" dataList="0" errorMsg="当[业务种类]字段为贷款，[账户拥有者信息提示]为新账户开立,并且[结算/应还款日期]所在月等于[开户日期]所在月,[透支180天以上未付余额]字段必须为'0'" errorCode="1210036">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="GeneralType" dataList="1;"/>
+                            <rule name="rule2" checkType="DL" checkedFieldName="tradeType" dataList="2;"/>
+                            <rule name="rule3" checkType="DE" checkedFieldName="DataOpened" checkedStartPosition="0" checkedEndPostion="6" dataList="{$dataYearMonth}"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-73" checkType="DL" checkedFieldName="tradeType" dataList="1;2;3;" errorMsg="基础段[账户拥有者信息提示]字段不在数据字典列表中" errorCode="7121109"/>
+                    <rule name="rule2-74" checkType="DL" checkedFieldName="CertType" dataList="0;1;2;3;4;5;6;7;8;9;X;" errorMsg="基础段[证件类型]字段不在数据字典列表中" errorCode="5107108"/>
+                    <rule name="rule2-75" checkType="ID" checkedFieldName="CertNo" errorMsg="基础段[证件类型]字段为身份证，基础段[证件号码]必须为有效身份证号码" errorCode="5109037">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="CertType" dataList="0;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule2-76" checkType="NA" checkedFieldName="Name" reverseCheck="true" errorMsg="基础段[姓名]字段不能为空" errorCode="5101013"/>
+                    <!--
+		<rule name="rule2-81" checkType="CS" checkedFieldName="Name" 
+			errorMsg="基础段[姓名]字段汉字检查错误"
+			errorCode = "5101069" />	
+	     -->
+                    <rule name="rule2-77" checkType="NA" checkedFieldName="CertNo" reverseCheck="true" errorMsg="基础段[证件号码]字段不能为空" errorCode="5109013"/>
+                    <rule name="rule2-78" checkType="NA" checkedFieldName="FinanceCode" reverseCheck="true" errorMsg="基础段[金融机构代码]字段不能为空" errorCode="6101013"/>
+                    <rule name="rule2-79" checkType="NA" checkedFieldName="Account" reverseCheck="true" errorMsg="基础段[业务号]字段不能为空" errorCode="7101013"/>
+                </checkrules>
+            </segment>
+            <segment name="B" segmentLength="371" opitional="false" unique="true">
+                <field name="B" type="A" startPosition="0" endPosition="0" opitional="false"/>
+                <field name="Gender" type="N" startPosition="1" endPosition="1" opitional="false"/>
+                <field name="Birthday" type="A" startPosition="2" endPosition="9" opitional="false"/>
+                <field name="Marriage" type="N" startPosition="10" endPosition="11" opitional="false"/>
+                <field name="EduLevel" type="N" startPosition="12" endPosition="13" opitional="false"/>
+                <field name="EduDegree" type="N" startPosition="14" endPosition="14" opitional="false"/>
+                <field name="HomeTel" type="A" startPosition="15" endPosition="39" opitional="false"/>
+                <field name="MobileTel" type="A" startPosition="40" endPosition="55" opitional="false"/>
+                <field name="OfficeTel" type="A" startPosition="56" endPosition="80" opitional="false"/>
+                <field name="Email" type="A" startPosition="81" endPosition="110" opitional="false"/>
+                <field name="Address" type="A" startPosition="111" endPosition="170" opitional="false"/>
+                <field name="ZIP" type="A" startPosition="171" endPosition="176" opitional="false"/>
+                <field name="Residence1" type="A" startPosition="177" endPosition="236" opitional="false"/>
+                <field name="Spouse_Name" type="A" startPosition="237" endPosition="266" opitional="false"/>
+                <field name="Spouse_CertType" type="A" startPosition="267" endPosition="267" opitional="false"/>
+                <field name="Spouse_CertNo" type="A" startPosition="268" endPosition="285" opitional="false"/>
+                <field name="Spouse_Office" type="A" startPosition="286" endPosition="345" opitional="false"/>
+                <field name="Spouse_Tel" type="A" startPosition="346" endPosition="370" opitional="false"/>
+                <checkrules>
+                    <rule name="rule3-1" checkType="DL" checkedFieldName="Gender" dataList="0;1;2;9;" errorMsg="身份信息段[性别]字段不在数据字典列表中" errorCode="5105201"/>
+                    <rule name="rule3-2" checkType="D" checkedFieldName="Birthday" errorMsg="身份信息段[出生日期]字段必须为有效日期" errorCode="2408009"/>
+                    <rule name="rule3-3" checkType="DL" checkedFieldName="Marriage" dataList="10;20;21;22;23;30;40;90;" errorMsg="身份信息段[婚姻状况]字段不在数据字典列表中" errorCode="5111202"/>
+                    <rule name="rule3-4" checkType="DL" checkedFieldName="EduLevel" dataList="10;20;30;40;50;60;70;80;90;99;" errorMsg="身份信息段[最高学历]字段不在数据字典列表中" errorCode="5113203"/>
+                    <rule name="rule3-5" checkType="DL" checkedFieldName="EduDegree" dataList="0;1;2;3;4;9;" errorMsg="身份信息段[最高学位]字段不在数据字典列表中" errorCode="5115204"/>
+                    <rule name="rule3-6" checkType="DL" checkedFieldName="Spouse_CertType" dataList="0;1;2;3;4;5;6;7;8;9;X;" errorMsg="身份信息段[配偶证件类型]字段不在数据字典列表中" errorCode="5208108">
+                        <precondition>
+                            <rule name="rule1" checkType="NA" checkedFieldName="Spouse_CertType" reverseCheck="true"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule3-8" checkType="N" checkedFieldName="ZIP" errorMsg="身份信息段[通讯地址邮政编码]字段数字型检查错误" errorCode="3109012"/>
+                    <rule name="rule3-10" checkType="NA" checkedFieldName="Spouse_Name" errorMsg="[婚姻状况]字段为未婚，[配偶姓名]字段必须为空" errorCode="5111038">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="Marriage" dataList="10;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule3-10" checkType="NA" checkedFieldName="Spouse_CertType" errorMsg="[婚姻状况]字段为未婚，[配偶证件类型]字段必须为空" errorCode="5111038">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="Marriage" dataList="10;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule3-11" checkType="NA" checkedFieldName="Spouse_CertNo" errorMsg="[婚姻状况]字段为未婚，[配偶证件号码]字段必须为空" errorCode="5111038">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="Marriage" dataList="10;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule3-12" checkType="NA" checkedFieldName="Spouse_Office" errorMsg="[婚姻状况]字段为未婚，[配偶工作单位]字段必须为空" errorCode="5111038">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="Marriage" dataList="10;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule3-13" checkType="NA" checkedFieldName="Spouse_Tel" errorMsg="[婚姻状况]字段为未婚，[配偶联系电话]字段必须为空" errorCode="5111038">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="Marriage" dataList="10;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule3-14" checkType="NA" checkedFieldName="Address" reverseCheck="true" errorMsg="身份信息段[通讯地址]字段不能为空" errorCode="3113013"/>
+                </checkrules>
+            </segment>
+            <segment name="C" segmentLength="199" opitional="true" unique="false">
+                <field name="C" type="A" startPosition="0" endPosition="0" opitional="false"/>
+                <field name="Occupation" type="A" startPosition="1" endPosition="1" opitional="false" hashField="false"/>
+                <field name="Company" type="A" startPosition="2" endPosition="61" opitional="false" hashField="true"/>
+                <field name="Industry" type="A" startPosition="62" endPosition="62" opitional="false" hashField="false"/>
+                <field name="OccAddress" type="A" startPosition="63" endPosition="122" opitional="false" hashField="false"/>
+                <field name="OccZIP" type="A" startPosition="123" endPosition="128" opitional="false" hashField="false"/>
+                <field name="Duration" type="A" startPosition="129" endPosition="132" opitional="false" hashField="false"/>
+                <field name="Duty" type="N" startPosition="133" endPosition="133" opitional="false" hashField="false"/>
+                <field name="Caste" type="N" startPosition="134" endPosition="134" opitional="false" hashField="false"/>
+                <field name="AnnualIncome" type="A" startPosition="135" endPosition="144" opitional="false" hashField="false"/>
+                <field name="SalaryAccount" type="A" startPosition="145" endPosition="184" opitional="false"/>
+                <field name="SalaryAccountBank" type="A" startPosition="185" endPosition="198" opitional="false"/>
+                <checkrules>
+                    <rule name="rule4-1" checkType="NA" checkedFieldName="Company" reverseCheck="true" errorMsg="职业信息段[单位名称]字段不能为空" errorCode="5117013"/>
+                    <rule name="rule4-2" checkType="N" checkedFieldName="OccZIP" errorMsg="职业信息段[单位地址邮政编码]字段数字型检查错误" errorCode="3129012">
+                        <precondition>
+                            <rule name="rule3" checkType="NA" checkedFieldName="OccZIP" reverseCheck="true"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule4-3" checkType="DL" checkedFieldName="Occupation" dataList="0;1;3;4;5;6;X;Y;Z;" errorMsg="职业信息段[职业]字段不在数据字典列表中" errorCode="5119301"/>
+                    <rule name="rule4-4" checkType="DL" checkedFieldName="Industry" dataList="A;B;C;D;E;F;G;H;I;J;K;L;M;N;O;P;Q;R;S;T;Z;" errorMsg="职业信息段[单位所属行业]字段不在数据字典列表中" errorCode="6103302"/>
+                    <rule name="rule4-5" checkType="N" checkedFieldName="Duration" errorMsg="职业信息段[本单位工作起始年份]字段数字型检查错误" errorCode="2109012">
+                        <precondition>
+                            <rule name="rule3" checkType="NA" checkedFieldName="Duration" reverseCheck="true"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule5-6" checkType="DR" checkedFieldName="Duration" dataStartValue="1900" dataEndValue="{$currentYear}" errorMsg="职业信息段[本单位工作起始年份]必须大于等于'1900'同时小于等于当前年份" errorCode="2109039">
+                        <precondition>
+                            <rule name="rule3" checkType="NA" checkedFieldName="Duration" reverseCheck="true"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule4-7" checkType="DL" checkedFieldName="Duty" dataList="1;2;3;4;9;" errorMsg="职业信息段[职务]字段不在数据字典列表中" errorCode="5121303"/>
+                    <rule name="rule4-8" checkType="DL" checkedFieldName="Caste" dataList="0;1;2;3;9;" errorMsg="职业信息段[职称]字段不在数据字典列表中" errorCode="5123304"/>
+                    <rule name="rule4-9" checkType="N" checkedFieldName="AnnualIncome" errorMsg="职业信息段[年收入]字段数字型检查错误" errorCode="5125012">
+                        <precondition>
+                            <rule name="rule3" checkType="NA" checkedFieldName="AnnualIncome" reverseCheck="true"/>
+                        </precondition>
+                    </rule>
+                </checkrules>
+            </segment>
+            <segment name="D" segmentLength="68" opitional="true" unique="false">
+                <field name="D" type="A" startPosition="0" endPosition="0" opitional="false"/>
+                <field name="HomeAddress" type="A" startPosition="1" endPosition="60" opitional="false" hashField="true"/>
+                <field name="ResZIP" type="A" startPosition="61" endPosition="66" opitional="false" hashField="false"/>
+                <field name="ResCondition" type="A" startPosition="67" endPosition="67" opitional="false" hashField="false"/>
+                <checkrules>
+                    <rule name="rule5-1" checkType="NA" checkedFieldName="HomeAddress" reverseCheck="true" errorMsg="居住地址段[居住地址]字段不能为空" errorCode="3103013"/>
+                    <rule name="rule5-2" checkType="N" checkedFieldName="ResZIP" errorMsg="居住地址段[居住地址邮政编码]字段数字型检查错误" errorCode="3121012"/>
+                    <rule name="rule5-3" checkType="DL" checkedFieldName="ResCondition" dataList="1;2;3;4;5;6;7;9;" errorMsg="居住地址段[居住状况]字段不在数据字典列表中" errorCode="5127401"/>
+                </checkrules>
+            </segment>
+            <segment name="E" segmentLength="61" opitional="true" unique="false">
+                <field name="E" type="A" startPosition="0" endPosition="0" opitional="false"/>
+                <field name="Name" type="A" startPosition="1" endPosition="30" opitional="false"/>
+                <field name="CertType" type="A" startPosition="31" endPosition="31" opitional="false"/>
+                <field name="CertNo" type="A" startPosition="32" endPosition="49" opitional="false"/>
+                <field name="GuaranteeSum" type="N" startPosition="50" endPosition="59" opitional="false"/>
+                <field name="GuaranteeStat" type="N" startPosition="60" endPosition="60" opitional="false"/>
+                <checkrules checkLevel="1">
+                    <rule name="rule6-1" checkType="NA" checkedFieldName="Name" reverseCheck="true" errorMsg="担保信息段[姓名]字段不能为空" errorCode="5101013"/>
+                    <!--
+ 	     		<rule name="rule6-6" checkType="CS" checkedFieldName="Name" 
+ 	     			errorMsg="担保信息段[姓名]字段值汉字检查错误"
+ 	     			errorCode = "5101070"/>
+ 	     	        -->
+                    <rule name="rule6-2" checkType="DL" checkedFieldName="CertType" dataList="0;1;2;3;4;5;6;7;8;9;X;" errorMsg="担保信息段[证件类型]字段不在数据字典列表中" errorCode="5107108"/>
+                    <rule name="rule6-3" checkType="NA" checkedFieldName="CertNo" reverseCheck="true" errorMsg="担保信息段[证件号码]字段不能为空" errorCode="5109013"/>
+                    <rule name="rule6-4" checkType="ID" checkedFieldName="CertNo" errorMsg="担保信息段[证件号码]字段不符合检查规则：[证件类型]字段为身份证，[证件号码]字段不为有效身份证号码" errorCode="5109040">
+                        <precondition>
+                            <rule name="rule1" checkType="DL" checkedFieldName="CertType" dataList="0;"/>
+                        </precondition>
+                    </rule>
+                    <rule name="rule6-5" checkType="N" checkedFieldName="GuaranteeSum" errorMsg="担保信息段[担保金额]字段数字型检查错误" errorCode="1121012"/>
+                    <rule name="rule6-6" checkType="DL" checkedFieldName="GuaranteeStat" dataList="1;2;" errorMsg="担保信息段[担保状态]字段不在数据字典列表中" errorCode="7119501"/>
+                </checkrules>
+            </segment>
+            <segment name="F" segmentLength="63" opitional="true" unique="false">
+                <field name="F" type="A" startPosition="0" endPosition="0" opitional="false"/>
+                <field name="Account" type="A" startPosition="1" endPosition="40" opitional="false"/>
+                <field name="FinanceCode" type="A" startPosition="41" endPosition="54" opitional="false"/>
+                <field name="BillingDATE" type="A" startPosition="55" endPosition="62" opitional="false"/>
+                <checkrules>
+                    <rule name="rule7-1" checkType="D" checkedFieldName="BillingDATE" errorMsg="交易标识变更段[结算/应还款日期]字段必须为有效日期" errorCode="2301009"/>
+                    <rule name="rule7-2" checkType="NA" checkedFieldName="Account" reverseCheck="true" errorMsg="交易标识变更段[业务号]字段不能为空" errorCode="7101013"/>
+                    <rule name="rule7-3" checkType="NA" checkedFieldName="FinanceCode" reverseCheck="true" errorMsg="交易标识变更段[金融机构代码]字段不能为空" errorCode="6101013"/>
+                </checkrules>
+            </segment>
+            <segment name="G" segmentLength="224" opitional="true" unique="false">
+                <field name="G" type="A" startPosition="0" endPosition="0" opitional="false"/>
+                <field name="SpecType" type="N" startPosition="1" endPosition="1" opitional="false"/>
+                <field name="SpecDATE" type="A" startPosition="2" endPosition="9" opitional="false"/>
+                <field name="SpecMonth" type="A" startPosition="10" endPosition="13" opitional="false"/>
+                <field name="SpecMoney" type="A" startPosition="14" endPosition="23" opitional="false"/>
+                <field name="SpecDetail" type="A" startPosition="24" endPosition="223" opitional="false"/>
+                <checkrules>
+                    <rule name="rule8-1" checkType="DL" checkedFieldName="SpecType" dataList="1;2;3;9;" errorMsg="特殊交易段[特殊交易类型]字段不在数据字典列表中" errorCode="7113601"/>
+                    <rule name="rule8-2" checkType="D" checkedFieldName="SpecDATE" errorMsg="特殊交易段[发生日期]字段必须为有效日期" errorCode="2410009"/>
+                    <rule name="rule8-3" checkType="N" checkedFieldName="SpecMonth" strictLevel="1" errorMsg="特殊交易段[变更月数]字段必须为整数" errorCode="4418043"/>
+                    <rule name="rule8-4" checkType="N" checkedFieldName="SpecMoney" errorMsg="特殊交易段[发生金额]字段必须为数字型" errorCode="1416012"/>
+                    <rule name="rule8-5" checkType="NA" checkedFieldName="SpecDetail" reverseCheck="true" errorMsg="特殊交易段[明细信息]字段不能为空" errorCode="8101013"/>
+                </checkrules>
+            </segment>
+            <segment name="H" segmentLength="201" opitional="true" unique="false">
+                <field name="H" type="A" startPosition="0" endPosition="0" opitional="false"/>
+                <field name="SpecRecord" type="A" startPosition="1" endPosition="200" opitional="false"/>
+                <checkrules>
+                    <rule name="rule9-1" checkType="NA" checkedFieldName="SpecRecord" reverseCheck="true" errorMsg="特别记录段[特别记录信息]字段不能为空" errorCode="8102013"/>
+                </checkrules>
+            </segment>
+            <!--checkLevel描述检查级别，1为最高，可以为每一个检查规则设置一个检查级别，在检查的时候，只检查比设置的检查级别高的
+	     检查规则，如果没有设置检查级别，缺省为1-->
+            <checkrules>
+                <rule name="rule1" checkType="SN" checkedFieldName="A" dataStartValue="1" dataEndValue="1" errorMsg="每条记录有且只能有一个基础段，[错误代码：0000001]。" errorCode="0000001"/>
+                <rule name="rule2" checkType="SP" checkedFieldName="A" dataStartValue="0" errorMsg="不符合检查规则:记录中第一个段必须是基础段，[错误代码：0000001]。" errorCode="0000001"/>
+                <rule name="rule3" checkType="DE" checkedFieldName="{RecordHeader.recordLength}" compareWay="number" dataList="{$Checkedlength}" errorMsg="不符合检查规则：基础段中'帐户记录长度'字段值必须等于实际记录长度，[错误代码：0000002]。" errorCode="0000002">    	   		 
+			</rule>
+                <rule name="rule4" checkType="SN" checkedFieldName="B" dataStartValue="0" dataEndValue="1" errorMsg="每条记录最多只能有一个身份信息段，[错误代码：0000003]。" errorCode="0000003"/>
+                <rule name="rule5" checkType="SN" checkedFieldName="C" dataStartValue="0" dataEndValue="1" errorMsg="每条记录最多只能有一个职业信息段，[错误代码：0000003]。" errorCode="0000003"/>
+                <rule name="rule6" checkType="SN" checkedFieldName="D" dataStartValue="0" dataEndValue="1" errorMsg="每条记录最多只能有一个居住地址段，[错误代码：0000003]。" errorCode="0000003"/>
+                <rule name="rule7" checkType="SN" checkedFieldName="F" dataStartValue="0" dataEndValue="1" errorMsg="每条记录最多只能有一个交易标识变更段，[错误代码：0000003]。" errorCode="0000003"/>
+                <rule name="rule8" checkType="SN" checkedFieldName="G" dataStartValue="0" dataEndValue="1" errorMsg="每条记录最多只能有一个特殊交易段，[错误代码：0000003]。" errorCode="0000003"/>
+                <rule name="rule9" checkType="SN" checkedFieldName="H" dataStartValue="0" dataEndValue="1" errorMsg="每条记录最多只能有一个特别记录段，[错误代码：0000003]。" errorCode="0000003"/>
+                <rule name="rule10" checkType="SD" checkedFieldName="E" dataList="Name;CertType;CertNo" errorMsg="包含多个担保信息段，任意两个担保信息段的[姓名]、[证件类型]、[证件号码]不能完全相同，[错误代码：0000004]。" errorCode="0000004"/>
+                <rule name="rule11" checkType="DL" checkedFieldName="{A.GuaranteeWay}" dataList="3;5;" errorMsg="记录中包含担保信息段,并且担保信息段[担保关系]字段为担保，基础段中[担保方式]字段值必须含保证，[错误代码：0000006]。" errorCode="0000006">
+                    <precondition>
+                        <rule name="rule5" checkType="SN" checkedFieldName="E" dataStartValue="1" dataEndValue="100"/>
+                        <rule name="rule1" checkType="DL" checkedFieldName="{E.GuaranteeStat}" dataList="1;" parameterRange="record"/>
+                    </precondition>
+                </rule>
+                <rule name="rule12" checkType="DL" checkedFieldName="{A.A}" dataList="A;" reverseCheck="true" errorMsg="报文头中的[报文类别]字段值为'正常数据'时,交易标识变更段中[金融机构代码]、[业务号]字段值不能和基础段中[金融机构代码]、[业务号]字段项值相同，[错误代码：0000005]。" errorCode="0000005">
+                    <precondition>
+                        <rule name="rule0" checkType="DE" checkedFieldName="{$msgType}" dataList="1"/>
+                        <rule name="rule1" checkType="SN" checkedFieldName="F" dataStartValue="1" dataEndValue="1"/>
+                        <rule name="rule2" checkType="DL" checkedFieldName="{F.Account}" dataList="{$A.Account};"/>
+                        <rule name="rule3" checkType="DL" checkedFieldName="{F.FinanceCode}" dataList="{$A.FinanceCode};"/>
+                    </precondition>
+                </rule>
+                <rule name="rule13" checkType="DL" checkedFieldName="{A.A}" dataList="A;" reverseCheck="true" errorMsg="报文头中的[报文类别]字段值为'纠错数据'时,交易标识变更段中[金融机构代码]、[业务号]、[结算/应还款日期]字段值不能和基础段中[金融机构代码]、[业务号]、[结算/应还款日期]字段项值相同，[错误代码：0000075]。" errorCode="0000075">
+                    <precondition>
+                        <rule name="rule0" checkType="DE" checkedFieldName="{$msgType}" dataList="2"/>
+                        <rule name="rule1" checkType="SN" checkedFieldName="F" dataStartValue="1" dataEndValue="1"/>
+                        <rule name="rule2" checkType="DL" checkedFieldName="{F.Account}" dataList="{$A.Account};"/>
+                        <rule name="rule3" checkType="DL" checkedFieldName="{F.FinanceCode}" dataList="{$A.FinanceCode};"/>
+                        <rule name="rule4" checkType="DL" checkedFieldName="{F.BillingDATE}" dataList="{$A.BillingDATE};"/>
+                    </precondition>
+                </rule>
+                <rule name="rule14" checkType="DE" checkedFieldName="{F.BillingDATE}" checkedStartPosition="0" checkedEndPostion="6" dataList="{$dataYearMonth}" errorMsg="报文头中的[报文类别]字段值为'纠错数据'时,交易标识变更段中[结算/应还款日期]应与基础段中[结算/应还款日期]所在年月相同，[错误代码：0000075]。" errorCode="0000075">
+                    <precondition>
+                        <rule name="rule0" checkType="DE" checkedFieldName="{$msgType}" dataList="2"/>
+                        <rule name="rule1" checkType="SN" checkedFieldName="F" dataStartValue="1" dataEndValue="1"/>
+                    </precondition>
+                </rule>
+                <rule name="rule15" checkType="DE" checkedFieldName="{F.Account}" dataList="{$A.Account}" errorMsg="报文头中的'报文类别'字段值为'纠错数据'，基础段中的账户拥有者信息为'2-新账户开立'时，账户记录如果存在交易标识变更段，则交易标识变更段中[业务号]数据项值必须和基础段中[业务号]数据项值全部相同" errorCode="0000076">
+                    <precondition>
+                        <rule name="rule0" checkType="DE" checkedFieldName="{$msgType}" dataList="2"/>
+                        <rule name="rule0" checkType="DL" checkedFieldName="{A.tradeType}" dataList="2;"/>
+                        <rule name="rule1" checkType="SN" checkedFieldName="F" dataStartValue="1" dataEndValue="1"/>
+                    </precondition>
+                </rule>
+                <rule name="rule16" checkType="DE" checkedFieldName="{F.FinanceCode}" dataList="{$A.FinanceCode}" errorMsg="报文头中的'报文类别'字段值为'纠错数据'，基础段中的账户拥有者信息为'2-新账户开立'时，账户记录如果存在交易标识变更段，则交易标识变更段中[金融机构代码]数据项值必须和基础段中[金融机构代码]数据项值全部相同" errorCode="0000076">
+                    <precondition>
+                        <rule name="rule0" checkType="DE" checkedFieldName="{$msgType}" dataList="2"/>
+                        <rule name="rule0" checkType="DL" checkedFieldName="{A.tradeType}" dataList="2;"/>
+                        <rule name="rule1" checkType="SN" checkedFieldName="F" dataStartValue="1" dataEndValue="1"/>
+                    </precondition>
+                </rule>
+                <rule name="rule17" checkType="SN" checkedFieldName="E" dataStartValue="1" dataEndValue="100" errorMsg="基础段中的账户拥有者信息为'新账户开立'时，基础段中[担保方式]含保证时，担保信息段必须存在，[错误代码：0000007]。" errorCode="0000007">
+                    <precondition>
+                        <rule name="rule0" checkType="DL" checkedFieldName="{A.tradeType}" dataList="2;"/>
+                        <rule name="rule1" checkType="DL" checkedFieldName="{A.GuaranteeWay}" dataList="3;5;"/>
+                    </precondition>
+                </rule>
+                <rule name="rule18" checkType="DL" checkedFieldName="{E.GuaranteeStat}" dataList="1;" errorMsg="基础段中的账户拥有者信息为'新账户开立'时，基础段中[担保方式]含保证时，担保信息段[担保关系]字段必须为‘担保'，[错误代码：0000007]。" errorCode="0000007">
+                    <precondition>
+                        <rule name="rule0" checkType="DL" checkedFieldName="{A.tradeType}" dataList="2;"/>
+                        <rule name="rule1" checkType="DL" checkedFieldName="{A.GuaranteeWay}" dataList="3;5;"/>
+                        <rule name="rule2" checkType="SN" checkedFieldName="E" dataStartValue="1" dataEndValue="100"/>
+                    </precondition>
+                </rule>
+                <rule name="rule19" checkType="SN" checkedFieldName="F" dataList="1;" dataStartValue="0" dataEndValue="0" errorMsg="报文头中的[报文类别]字段值为'正常数据'，当基础段中的[账户拥有者信息]字段'新账户开立'时，不能包含交易标识变更段，[错误代码：0000008]。" errorCode="0000008">
+                    <precondition>
+                        <rule name="rule0" checkType="DE" checkedFieldName="{$msgType}" dataList="1"/>
+                        <rule name="rule1" checkType="DL" checkedFieldName="{A.tradeType}" dataList="2;"/>
+                    </precondition>
+                </rule>
+                <rule name="rule20" checkType="SN" checkedFieldName="B" dataStartValue="1" errorMsg="基础段中的账户拥有者信息为'新账户开立'时，必须包括身份信息段，[错误代码：0000065]。" errorCode="0000065">
+                    <precondition>
+                        <rule name="rule1" checkType="DL" checkedFieldName="{A.tradeType}" dataList="2;"/>
+                    </precondition>
+                </rule>
+                <rule name="rule21" checkType="SN" checkedFieldName="C" dataStartValue="1" errorMsg="基础段中的账户拥有者信息为'新账户开立'时，必须包括职业信息段，[错误代码：0000065]。" errorCode="0000065">
+                    <precondition>
+                        <rule name="rule1" checkType="DL" checkedFieldName="{A.tradeType}" dataList="2;"/>
+                    </precondition>
+                </rule>
+                <rule name="rule22" checkType="SN" checkedFieldName="D" dataStartValue="1" errorMsg="基础段中的账户拥有者信息为'新账户开立'时，必须包括居住地址段，[错误代码：0000065]。" errorCode="0000065">
+                    <precondition>
+                        <rule name="rule1" checkType="DL" checkedFieldName="{A.tradeType}" dataList="2;"/>
+                    </precondition>
+                </rule>
+                <rule name="rule23" checkType="DR" checkedFieldName="{G.SpecDATE}" dataStartValue="{$A.DataOpened}" dataEndValue="{$systemdate}" errorMsg="特殊交易段的[发生日期]字段值必须大于等于基础段[开户日期]字段值同时小于等于系统当前日期，[错误代码：2410042]。" errorCode="2410042">
+                    <precondition>
+                        <rule name="rule5" checkType="SN" checkedFieldName="G" dataStartValue="1" dataEndValue="100"/>
+                    </precondition>
+                </rule>
+                <rule name="rule24" checkType="DR" checkedFieldName="{F.BillingDATE}" dataStartValue="{$A.DataOpened}" dataEndValue="{$systemdate}" errorMsg="交易标识变更段的[结算/应还款日期]字段值必须大于等于基础段[开户日期]字段值同时小于等于系统当前日期，[错误代码：2301041]。" errorCode="2301041">
+                    <precondition>
+                        <rule name="rule5" checkType="SN" checkedFieldName="F" dataStartValue="1" dataEndValue="1"/>
+                    </precondition>
+                </rule>
+            </checkrules>
+        </message>
+    </messageList>
+</configuration>

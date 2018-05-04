@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="GB2312" ?>
+<configuration>
+	<!--预处理版本号-->
+	<version>1.0</version>
+
+	<!--是否检查文件名-->
+  	<CheckFileName>false</CheckFileName>
+  	
+	<!--是否检查数据格式-->
+  	<CheckFormat>false</CheckFormat>
+  	
+    <!--是否将检查通过记录写入新的文件-->
+    <OutputPassFile>false</OutputPassFile>
+     
+    <!--是否进行加密加压-->
+    <CryptFile>false</CryptFile>
+	
+	<!-- 进行加密还是解密(1为加密，2为解密 -->
+	<cryptMode>2</cryptMode>
+	
+	<!-- 使用公钥还是使用私钥解密(1为使用公钥,2为使用私钥 -->
+	<keyMode>2</keyMode>
+	
+</configuration>

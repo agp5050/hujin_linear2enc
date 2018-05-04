@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="GB2312" ?>
+<configuration>
+
+    <!--PLSQL,APP-->
+    <loadmode mode="PLSQL" />
+
+    <!--报文读取线程个数-->
+    <Generator count="1"/>
+
+    <!--记录加载线程-->
+    <!--count-线程个数;interval-启动时间间隔-->
+    <Handler count="10" interval="300"/>
+
+    <!--记录队列属性配置：capacity-队列的最大容量，即可以存放记录包的最大个数-->
+    <Packqueue capacity="100"/>
+
+    <!--记录包配置：capacity-记录包的最大容量，即每个记录包可以存放记录的最大个数-->
+    <RecPack capacity="1000"/>
+
+    <!-- 获取加载任务的方式（0:直接从调度服务器获取任务;
+                             1:直接从管理库获取任务;
+                             其它:从目录中获取任务 -->
+    <tasks tasksource="2">
+    	<task type="" name="task1" msgPath="D:/baowen/B10111000H00012000016041000.txt" badRecPath="G:/B20236527S000120040321111.bad" msgId = "1"/>   	
+    </tasks>
+    
+    <!--/////////密钥管理器/////////////////////////////////-->
+    <!--keyStore-密钥库，解密操作只要配置该项即可-->
+    <!--publicKey-加密公钥，加密操作只要配置该项即可-->
+    <!--////////////////////////////////////////////////////-->
+    <KeyManager desc="RSA Key Pair Mananger">
+        <keyStore desc="Key store properties" alias="ifa" password="ifaifa"/>    	
+    </KeyManager>
+       
+    <!--消费线程池大小-->
+    <threadpoolsize>1</threadpoolsize>
+    
+    <!--报文处理前处理器-->
+    <prehandler>com.icfcc.batch.validator.PreMsgChecker</prehandler>
+    
+    <!--报文处理完毕处理器-->
+    <offhandler>com.icfcc.batch.validator.OffMsgChecker</offhandler>
+    
+    <!--报文处理类-->    
+    <msgloader>com.icfcc.batch.validator.RecordChecker</msgloader>
+    
+    <!--错误处理类-->
+    <errorhandler>com.icfcc.batch.validator.MsgErrorHandler</errorhandler>
+    
+    <!--任务获取类-->
+    <taskRequestor>com.icfcc.batch.core.ETLTaskRequest</taskRequestor>
+    
+    
+    
+    <!--子系统名称（记录日志时用）-->
+    <sysname>报文处理子系统</sysname>
+    
+    <!--子系统编码-->
+    <syscode>10</syscode>
+    
+    <!--调度任务类型（批量==1、公安==2......）-->
+    <tasktype>4</tasktype>
+    
+    <!--报文类型（1:明文、2:加密加压报文）-->
+    <msgtype>1</msgtype>
+    
+    <!--调试控制-->
+    <debug>true</debug>
+    
+    <!--所有工作线程停止后调用
+    <threadhandler>com.icfcc.batch.validator.AfterThreadHandler</threadhandler>
+    -->
+    
+    <!--是否parseRecord-->
+    <parseRecord>1</parseRecord>
+    
+    <!--预处理方式1:全部重新进行检查 2:只对没有进行预处理的文件进行检查3：只进行格式检查，不进行接口规范检查-->
+    <checkMode>1</checkMode>   
+     
+    <!--用户权限-->
+    <userright>13007</userright>
+    
+    <!--认证服务器地址-->
+    <authUrl>1 </authUrl>
+    
+</configuration>

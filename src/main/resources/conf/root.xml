@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="GB2312" ?>
+<configuration>
+	<xmlfile>
+		<name>conf/batch.xml</name>
+		<name>conf/database.xml</name>
+	</xmlfile>
+</configuration>
